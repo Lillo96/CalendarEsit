@@ -8,10 +8,39 @@ import calendar
 
 from .forms import EventForm 
 from .models import *
-from .utils import Calendar
+from .utils import Calendar as CalendarUtils
+
+def hello(request):
+    return render(request, 'cal/hello.html')
+    #return HttpResponse('hello')
+
+def home(request):
+    return render(request, 'cal/home.html')
 
 def index(request):
     return HttpResponse('hello')
+
+class GroupCalendarView(generic.ListView):
+    model = CalendarGroups
+    template_name = 'cal/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        return context
+
+class CalendarsOfGroupView(generic.ListView):
+    model = Calendar
+    template_name = 'cal/calendarOfGroup.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #i = kwargs['group_id']
+        
+
+        #tmp = context.objects.filter( group = i)
+
+        return context
 
 class CalendarView(generic.ListView):
     model = Event
@@ -24,7 +53,7 @@ class CalendarView(generic.ListView):
         d = get_date(self.request.GET.get('month', None))
 
         # Instantiate our calendar class with today's year and date
-        cal = Calendar(d.year, d.month)
+        cal = CalendarUtils(d.year, d.month)
 
         # Call the formatmonth method, which returns our calendar as a table
         html_cal = cal.formatmonth(withyear=True)
@@ -54,7 +83,6 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
-
 def event(request, event_id=None):
     instance = Event()
     if event_id:
@@ -67,3 +95,13 @@ def event(request, event_id=None):
         form.save()
         return HttpResponseRedirect(reverse('cal:calendar'))
     return render(request, 'cal/event.html', {'form': form})
+"""
+def calendarViewProva(request, group_id=None):
+    sinstance = Calendar()
+    if group_id:
+        instance = get_object_or_404(Calendar, pk=group_id)
+    else:
+        instance = Calendar()
+
+    return render(request, 'cal/calendar.html', {})
+"""
