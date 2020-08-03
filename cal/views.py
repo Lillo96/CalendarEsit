@@ -37,7 +37,7 @@ class CalendarsOfGroupView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         group_id = self.kwargs['group_id']       
-        object_list = Calendar.objects.filter(group=2)
+        object_list = Calendar.objects.filter(group=group_id)
         context.update({'object_list': object_list})
         
         #print (context)

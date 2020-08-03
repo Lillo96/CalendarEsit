@@ -10,14 +10,39 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
   <link rel="stylesheet" type="text/css" href="{% static 'cal/css/styles.css' %}">
+  <!--
   <link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css"/>
   <link rel="stylesheet" type="text/css" href="/media/admin/css/base.css"/>
   <link rel="stylesheet" type="text/css" href="/media/admin/css/global.css"/>
   <link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
+  -->
   <title>Calendar</title>
 </head>
-<body>
+<body class="text-center mt-5">
+	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+		<main class="inner cove border" role="main" style="background-color: white;">
+			<h1 class="cover-heading">Benvenuto</h1>
+			
+			<div id="form" class="lead">
+				<form>
+					  <div class="form-group">
+					    <label for="Useraname">Username</label>
+				            <input type="username" class="form-control" id="username" aria-describedby="usernameHelp">
+					    <!--<small id="usernameHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+					  </div>
+					  <div class="form-group">
+					    <label for="Password">Password</label>
+					    <input type="password" class="form-control" id="password">
+					  </div>
+					  <!-- <button type="submit" class="btn btn-primary">Login</button> -->
+					  <a class="btn btn-primary" href="home" role="button">Login</a>
+				</form>
+			</div>
+		</main>
+	</div>
  
+
+ <!---
   <div>
 
   <p>Benvenuto</p>
@@ -37,12 +62,14 @@
 	  </div>
 	  <!-- <button type="submit" class="btn btn-primary">Login</button> -->
           <!-- <a class="btn btn-primary" href="home.html" role="button">Login</a> -->
+  <!--
   </form>
 
   <a class="btn btn-primary" href="home" role="button">Login</a>
 
   </div>
   
+  -->
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -51,9 +78,9 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
-
+  <!--
   <script type="text/javascript" src="/my_admin/jsi18n/"></script>
   <script type="text/javascript" src="/media/admin/js/core.js"></script>
-
+  -->
 </body>
 </html>
