@@ -16,20 +16,31 @@
   <link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
   <title>Calendar</title>
 </head>
-<body>
+<body class="text-center mt-5">
+	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+		<main class="inner cove border" role="main" style="background-color: white;">
+			<h1 class="cover-heading mt-3">Lista Calendari</h1>
+			
+			<div class="mt-5">
+				<ul class="list-group">
+					{% for calendar in object_list %}
+			   	 	<a href="{{ calendar.id }}"><li class="list-group-item list-group-item-action">{{ calendar.name }}</li></a>
+					{% empty %}
+			    		<li>No articles yet.</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</main>
+	</div>
 
-<p>LISTA CALENDARI</p>
-
-<div>
-	<ul>
-		{% for calendar in object_list %}
-                
-   	 	<a href=""><li>{{ calendar.name }} - {{ calendar.group }}</li></a>
-		{% empty %}
-    		<li>No articles yet.</li>
-		{% endfor %}
-	</ul>
-</div>
+	<!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 
 </body>
 </html>

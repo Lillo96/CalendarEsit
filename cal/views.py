@@ -52,7 +52,7 @@ class EventsOfCalendarView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         calendar_id = self.kwargs['calendar_id']       
-        object_list = Event.objects.filter(calendar=5)
+        object_list = Event.objects.filter(calendar=calendar_id)
         context.update({'object_list': object_list})
         
         #print (context)
