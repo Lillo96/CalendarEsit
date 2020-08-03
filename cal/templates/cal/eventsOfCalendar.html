@@ -18,13 +18,13 @@
 </head>
 <body>
 
-<p>LISTA CALENDARI</p>
+<p>LISTA EVENTI</p>
 
 <div>
 	<ul>
-		{% for calendar in object_list %}
+		{% for event in object_list %}
                 
-   	 	<a href=""><li>{{ calendar.name }} - {{ calendar.group }}</li></a>
+   	 	<a href=""><li>{{ event.title }} - {{ event.calendar }}</li></a>
 		{% empty %}
     		<li>No articles yet.</li>
 		{% endfor %}

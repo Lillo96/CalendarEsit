@@ -19,11 +19,12 @@ class Calendar(models.Model):
     name = models.CharField(max_length=200)
     #created_by
     group = models.ForeignKey(CalendarGroups, on_delete = models.CASCADE, default='')
-
+ 
     @property
     def get_html_url(self):
-        url = reverse('cal:calendar_view', args=(self.id,))
+        url = reverse('cal:calendar_view', args=(self.id, self.group))
         return f'<a href="{url}"> {self.name} </a>'
+   
 
 class Event(models.Model):
     classrom = models.CharField(max_length=200)

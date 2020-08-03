@@ -26,22 +26,39 @@ class GroupCalendarView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+       
         return context
 
 class CalendarsOfGroupView(generic.ListView):
     model = Calendar
     template_name = 'cal/calendarOfGroup.html'
-
+    #i = kwargs['group_id']
+   
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #i = kwargs['group_id']
+        group_id = self.kwargs['group_id']       
+        object_list = Calendar.objects.filter(group=2)
+        context.update({'object_list': object_list})
         
+        #print (context)
 
-        #tmp = context.objects.filter( group = i)
+        return context 
 
-        return context
+class EventsOfCalendarView(generic.ListView):
+    model = Event
+    template_name = 'cal/eventsOfCalendar.html'
+    #i = kwargs['group_id']
+   
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar_id = self.kwargs['calendar_id']       
+        object_list = Event.objects.filter(calendar=5)
+        context.update({'object_list': object_list})
+        
+        #print (context)
 
+        return context    
+     
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'cal/calendar.html'
@@ -95,6 +112,7 @@ def event(request, event_id=None):
         form.save()
         return HttpResponseRedirect(reverse('cal:calendar'))
     return render(request, 'cal/event.html', {'form': form})
+
 """
 def calendarViewProva(request, group_id=None):
     sinstance = Calendar()
