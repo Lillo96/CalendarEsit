@@ -26,7 +26,7 @@
 					{% for event in object_list %}
 			   	 	<a><li class="list-group-item list-group-item-action">Titolo: {{ event.title }} - Start time: {{ event.start_time }}, End time: {{ event.end_time }} </li></a>
 					{% empty %}
-			    		<li>No articles yet.</li>
+			    		<li class="list-group-item">Non ci sono eventi programmati per questo calendario</li>
 					{% endfor %}
 				</ul>
 			</div>

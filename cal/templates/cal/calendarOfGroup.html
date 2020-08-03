@@ -26,7 +26,7 @@
 					{% for calendar in object_list %}
 			   	 	<a href="{{ calendar.id }}"><li class="list-group-item list-group-item-action">{{ calendar.name }}</li></a>
 					{% empty %}
-			    		<li>No articles yet.</li>
+			    		<li class="list-group-item">Non ci sono calendari disponibili per questo edificio</li>
 					{% endfor %}
 				</ul>
 			</div>

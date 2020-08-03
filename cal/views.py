@@ -113,13 +113,3 @@ def event(request, event_id=None):
         return HttpResponseRedirect(reverse('cal:calendar'))
     return render(request, 'cal/event.html', {'form': form})
 
-"""
-def calendarViewProva(request, group_id=None):
-    sinstance = Calendar()
-    if group_id:
-        instance = get_object_or_404(Calendar, pk=group_id)
-    else:
-        instance = Calendar()
-
-    return render(request, 'cal/calendar.html', {})
-"""

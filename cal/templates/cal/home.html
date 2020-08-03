@@ -23,7 +23,7 @@
 					{% for group in object_list %}
 			   	 	<a href="{{ group.id }}"><li class="list-group-item list-group-item-action">{{ group.name }}</li></a>
 					{% empty %}
-			    		<li>No articles yet.</li>
+			    		<li class="list-group-item">Non ci sono edifici disponibili</li>
 					{% endfor %}
 				</ul>
 			</div>
