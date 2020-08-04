@@ -75,9 +75,11 @@ a {
 /********************************************************************************************************/
 
 .calendar_view {
-  width: 74%;
-  margin: auto;
+  width: 85%;
+  margin: 88px;
   font-size: 15px;
+  top: 10%;
+  position: absolute;
 }
 
 .calendar_view tr, .calendar_view td {
@@ -119,6 +121,8 @@ a {
 
 .right {
   float: right;
+  position: absolute;
+  margin-left: 65%;
 }
 
 .btn {
@@ -129,7 +133,8 @@ a {
 }
 
 .clearfix {
-  margin: 15px;
+  margin-top: 70px;
+  margin-left: 7%;
 }
 
 .form {
