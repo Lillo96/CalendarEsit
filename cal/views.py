@@ -40,9 +40,12 @@ class CalendarsOfGroupView(generic.ListView):
         object_list = Calendar.objects.filter(group=group_id)
         context.update({'object_list': object_list})
         
-        #print (context)
+        #print (context['object_list'][0].group.name)
 
-        return context 
+        return context
+
+    def nome():
+        return context['object_list'][0].group.name 
 
 class EventsOfCalendarView(generic.ListView):
     model = Event
@@ -55,7 +58,7 @@ class EventsOfCalendarView(generic.ListView):
         object_list = Event.objects.filter(calendar=calendar_id)
         context.update({'object_list': object_list})
         
-        #print (context)
+        print (context)
 
         return context    
      
