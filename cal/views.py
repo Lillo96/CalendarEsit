@@ -71,7 +71,7 @@ class CalendarView(generic.ListView):
         d = get_date(self.request.GET.get('month', None))
 
         # Instantiate our calendar class with today's year and date
-        cal = CalendarUtils(d.year, d.month)
+        cal = CalendarUtils(d.year, d.month, calendar_id)
 
         # Call the formatmonth method, which returns our calendar as a table
         html_cal = cal.formatmonth(withyear=True)

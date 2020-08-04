@@ -22,7 +22,7 @@ class Calendar(models.Model):
  
     @property
     def get_html_url(self):
-        url = reverse('cal:calendar_view', args=(self.id, self.group))
+        url = reverse('cal:calendar_view', args=(self.id, self.group,))
         return f'<a href="{url}"> {self.name} </a>'
    
 
