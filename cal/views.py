@@ -66,7 +66,7 @@ class CalendarView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         calendar_id = self.kwargs['calendar_id']
-
+        
         # use today's date for the calendar
         d = get_date(self.request.GET.get('month', None))
 
@@ -118,4 +118,3 @@ def event(request, event_id=None):
         form.save()
         return HttpResponseRedirect(reverse('cal:calendar_view'))
     return render(request, 'cal/event.html', {'form': form})
-
