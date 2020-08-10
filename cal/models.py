@@ -27,10 +27,10 @@ class Calendar(models.Model):
    
 
 class Event(models.Model):
-    classrom = models.CharField(max_length=200)
+    classrom = models.CharField(max_length=200) #Da togliere
     #classrom = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField() #Vorrei toglierla
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 

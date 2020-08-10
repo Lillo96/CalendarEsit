@@ -109,7 +109,7 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
-def event(request, event_id=None):
+def event(request, event_id=None, group_id=None, calendar_id=None):
     instance = Event()
     if event_id:
         instance = get_object_or_404(Event, pk=event_id)
@@ -119,5 +119,5 @@ def event(request, event_id=None):
     form = EventForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():
         form.save()
-        return HttpResponseRedirect(reverse('cal:calendar_view'))
+        return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/event.html', {'form': form})

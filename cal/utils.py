@@ -8,6 +8,7 @@ class Calendar(HTMLCalendar):
 		self.year = year
 		self.month = month
 		self.calendar_id = calendar_id
+		#self.calendar_id = 6 
 		super(Calendar, self).__init__()
 
 	# formats a day as a td
