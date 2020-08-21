@@ -7,7 +7,7 @@ class CalendarGroups(models.Model):
        ('Mem', 'Mem'),
     )
 
-    name = models.CharField(max_length = 155, blank=True, null=True)
+    name = models.CharField(max_length = 155, blank=True, null=True, unique=True)
     
     @property
     def get_html_url(self):
@@ -16,7 +16,7 @@ class CalendarGroups(models.Model):
    
 
 class Calendar(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     #created_by
     group = models.ForeignKey(CalendarGroups, on_delete = models.CASCADE, default='')
  

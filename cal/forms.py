@@ -1,5 +1,7 @@
 from django.forms import ModelForm, DateInput
 from cal.models import Event
+from cal.models import CalendarGroups
+from cal.models import Calendar
 from django.contrib.admin import widgets
 
 class EventForm(ModelForm):
@@ -20,4 +22,21 @@ class EventForm(ModelForm):
         self.fields['end_time'].widget = widgets.AdminTimeWidget()
         #self.fields['calendar']
 
-        
+class CalendarGroupsForm(ModelForm):
+  class Meta:
+    model = CalendarGroups
+
+    fields = ('name',)
+
+    def __init__(self, *args, **kwargs):
+        super(CalendarGroupsForm, self).__init__(*args, **kwargs)
+
+
+class CalendarForm(ModelForm):
+  class Meta:
+    model = Calendar
+
+    fields = ('name', 'group')
+
+    def __init__(self, *args, **kwargs):
+        super(CalendarForm, self).__init__(*args, **kwargs)

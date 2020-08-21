@@ -21,8 +21,11 @@
 <body class="text-center mt-5">
 	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 		<main class="inner cove border" role="main" style="background-color: white;">
-			<h1 class="cover-heading">Benvenuto</h1>
-			
+			{% if user.is_authenticated %}
+			<h1 class="cover-heading">Benvenuto {{ user.get_username }}</h1>
+			{% else %}
+			<h1 class="cover-heading">Ciao</h1>
+			{% endif %}
 			<div id="form" class="lead">
 				<form>
 					  <div class="form-group">

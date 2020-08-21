@@ -6,12 +6,21 @@ from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404
 import calendar
 
-from .forms import EventForm 
+from .forms import EventForm
+from .forms import CalendarGroupsForm
+from .forms import CalendarForm
 from .models import *
 from .utils import Calendar as CalendarUtils
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
 def hello(request):
-    return render(request, 'cal/hello.html')
+    if User is not None:
+        """return render(request, 'cal/hello.html') """
+        return render(request, 'registration/login.html')
+    else:
+        return render(request, 'cal/hello.html')
     #return HttpResponse('hello')
 
 def home(request):
@@ -43,9 +52,6 @@ class CalendarsOfGroupView(generic.ListView):
         #print (context['object_list'][0].group.name)
 
         return context
-
-    def nome():
-        return context['object_list'][0].group.name 
 
 class EventsOfCalendarView(generic.ListView):
     model = Event
@@ -120,4 +126,31 @@ def event(request, event_id=None, group_id=None, calendar_id=None):
     if request.POST and form.is_valid():
         form.save()
         return HttpResponseRedirect(reverse('cal:home'))
-    return render(request, 'cal/event.html', {'form': form})
+    return render(request, 'cal/form.html', {'form': form})
+
+
+def group(request, group_id=None):
+    instance = CalendarGroups()
+    if group_id:
+        instance = get_object_or_404(CalendarGroups, pk=group_id)
+    else:
+        instance = CalendarGroups()
+
+    form = CalendarGroupsForm(request.POST or None, instance=instance)
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('cal:home'))
+    return render(request, 'cal/form.html', {'form': form})
+
+def calendar(request, group_id=None, calendar_id=None):
+    instance = Calendar()
+    if calendar_id:
+        instance = get_object_or_404(Calendar, pk=calendar_id)
+    else:
+        instance = Calendar()
+
+    form = CalendarForm(request.POST or None, instance=instance)
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('cal:home'))
+    return render(request, 'cal/form.html', {'form': form})

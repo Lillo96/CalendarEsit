@@ -214,3 +214,9 @@ main {
 .w-100 {
     width: 60% !important;
 }
+
+.topnav {
+    background-color: #333;
+    overflow: hidden;
+    z-index: 1000;
+}
