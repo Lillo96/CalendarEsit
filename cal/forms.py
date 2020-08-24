@@ -3,24 +3,28 @@ from cal.models import Event
 from cal.models import CalendarGroups
 from cal.models import Calendar
 from django.contrib.admin import widgets
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
 
 class EventForm(ModelForm):
-  class Meta:
-    model = Event
-    # datetime-local is a HTML5 input type, format to make date time show on fields
-    """
-    fields = ('classrom', 'title', 'description', 'start_time',
-                  'end_time')
-    """
-    fields = ('classrom', 'title', 'description', 'start_time',
-                  'end_time', 'calendar')
+    class Meta:
+        model = Event
+        fields = ('classrom', 'title', 'description', 'start_time', 'end_time', 'calendar')
+        widgets = {
+            'start_time': widgets.AdminTimeWidget(),
+            'end_time': widgets.AdminTimeWidget()
+        }
 
-    def __init__(self, *args, **kwargs):
-        super(EventForm, self).__init__(*args, **kwargs)
-        #self.fields['date'].widget = widgets.AdminDateWidget()
-        self.fields['start_time'].widget = widgets.AdminTimeWidget()
-        self.fields['end_time'].widget = widgets.AdminTimeWidget()
-        #self.fields['calendar']
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get('start_time')
+        end = cleaned_data.get('end_time')
+        if now() > start:
+            raise ValidationError('start time should later than now.')
+        if start > end:
+            raise ValidationError('end time should later start time.')
+        return cleaned_data
+
 
 class CalendarGroupsForm(ModelForm):
   class Meta:
