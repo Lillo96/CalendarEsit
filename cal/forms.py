@@ -41,6 +41,8 @@ class CalendarForm(ModelForm):
     model = Calendar
 
     fields = ('name', 'group')
-
+    
     def __init__(self, *args, **kwargs):
         super(CalendarForm, self).__init__(*args, **kwargs)
+        
+        

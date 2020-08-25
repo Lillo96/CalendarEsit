@@ -142,12 +142,14 @@ def group(request, group_id=None):
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})
 
-def calendar(request, group_id=None, calendar_id=None):
+def calendar(request, group_id=None):
     instance = Calendar()
-    if calendar_id:
-        instance = get_object_or_404(Calendar, pk=calendar_id)
+    """
+    if group_id:
+        instance = get_object_or_404(Calendar, pk=group_id)
     else:
-        instance = Calendar()
+    """
+    instance = Calendar()
 
     form = CalendarForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():

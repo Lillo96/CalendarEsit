@@ -8,6 +8,10 @@ class CalendarGroups(models.Model):
     )
 
     name = models.CharField(max_length = 155, blank=True, null=True, unique=True)
+
+    def __str__(self):
+        #self.name = name
+        return str(self.name)
     
     @property
     def get_html_url(self):
