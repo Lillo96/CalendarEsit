@@ -14,13 +14,10 @@ from .utils import Calendar as CalendarUtils
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def hello(request):
-    if User is not None:
-        """return render(request, 'cal/hello.html') """
-        return render(request, 'registration/login.html')
-    else:
-        return render(request, 'cal/hello.html')
+    return render(request, 'registration/login.html')
     #return HttpResponse('hello')
 
 def home(request):
@@ -29,7 +26,10 @@ def home(request):
 def index(request):
     return HttpResponse('hello')
 
-class GroupCalendarView(generic.ListView):
+class GroupCalendarView(LoginRequiredMixin, generic.ListView):
+    login_url = 'accounts/login/'
+    #redirect_field_name = 'redirect_to'
+
     model = CalendarGroups
     template_name = 'cal/home.html'
 
@@ -38,7 +38,7 @@ class GroupCalendarView(generic.ListView):
        
         return context
 
-class CalendarsOfGroupView(generic.ListView):
+class CalendarsOfGroupView(LoginRequiredMixin, generic.ListView):
     model = Calendar
     template_name = 'cal/calendarOfGroup.html'
     #i = kwargs['group_id']
@@ -128,7 +128,7 @@ def event(request, event_id=None, group_id=None, calendar_id=None):
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})
 
-
+@login_required
 def group(request, group_id=None):
     instance = CalendarGroups()
     if group_id:
