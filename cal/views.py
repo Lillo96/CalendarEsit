@@ -144,15 +144,13 @@ def group(request, group_id=None):
 
 def calendar(request, group_id=None):
     instance = Calendar()
-    """
-    if group_id:
-        instance = get_object_or_404(Calendar, pk=group_id)
-    else:
-    """
-    instance = Calendar()
-
+  
+    #instance = Calendar()
+    instance = Calendar(group_id=group_id)
     form = CalendarForm(request.POST or None, instance=instance)
+    #print (form['group'])
     if request.POST and form.is_valid():
+        #form['group'] =      
         form.save()
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})

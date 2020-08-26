@@ -40,9 +40,9 @@ class CalendarForm(ModelForm):
   class Meta:
     model = Calendar
 
-    fields = ('name', 'group')
-    
+    #fields = ('name', 'group')
+    fields = ('name',)
+
     def __init__(self, *args, **kwargs):
         super(CalendarForm, self).__init__(*args, **kwargs)
-        
         
