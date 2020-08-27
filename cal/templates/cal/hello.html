@@ -21,6 +21,17 @@
 <body class="text-center mt-5">
 	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 		<main class="inner cove border" role="main" style="background-color: white;">
+		{% if user.is_authenticated %}
+		<p>Ciao, benvenuto {{ user.get_username }}</p>
+		<p>Se vuoi uscire, clicca qui: </p><li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>		
+		<p>Clicca qui per iniziare a navigare nel sito</p>
+		<li><a href="{% url 'cal:home' %}">Home</a></li>
+		{% else %}
+		<p>Ciao, dovresti fare il login</p>
+		<li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+		{% endif %} 
+
+<!--
 			{% if user.is_authenticated %}
 			<h1 class="cover-heading">Benvenuto {{ user.get_username }}</h1>
 			{% else %}
@@ -32,15 +43,20 @@
 					    <label for="Useraname">Username</label>
 				            <input type="username" class="form-control" id="username" aria-describedby="usernameHelp">
 					    <!--<small id="usernameHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
-					  </div>
+					 <!-- </div>
 					  <div class="form-group">
 					    <label for="Password">Password</label>
 					    <input type="password" class="form-control" id="password">
 					  </div>
+-->
 					  <!-- <button type="submit" class="btn btn-primary">Login</button> -->
-					  <a class="btn btn-primary" href="home" role="button">Login</a>
+					<!--  <a class="btn btn-primary" href="home" role="button">Login</a>
 				</form>
 			</div>
+-->
+
+
+
 		</main>
 	</div>
  

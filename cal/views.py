@@ -17,7 +17,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 def hello(request):
-    return render(request, 'registration/login.html')
+    return render(request, 'cal/hello.html')
     #return HttpResponse('hello')
 
 def home(request):
@@ -27,7 +27,7 @@ def index(request):
     return HttpResponse('hello')
 
 class GroupCalendarView(LoginRequiredMixin, generic.ListView):
-    login_url = 'accounts/login/'
+    #login_url = 'accounts/login/'
     #redirect_field_name = 'redirect_to'
 
     model = CalendarGroups
@@ -53,7 +53,7 @@ class CalendarsOfGroupView(LoginRequiredMixin, generic.ListView):
 
         return context
 
-class EventsOfCalendarView(generic.ListView):
+class EventsOfCalendarView(LoginRequiredMixin, generic.ListView):
     model = Event
     template_name = 'cal/eventsOfCalendar.html'
     #i = kwargs['group_id']
@@ -68,7 +68,7 @@ class EventsOfCalendarView(generic.ListView):
 
         return context    
      
-class CalendarView(generic.ListView):
+class CalendarView(LoginRequiredMixin, generic.ListView):
     model = Event
     template_name = 'cal/calendar.html'
 
@@ -115,12 +115,10 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
+@login_required
 def event(request, event_id=None, group_id=None, calendar_id=None):
     instance = Event()
-    if event_id:
-        instance = get_object_or_404(Event, pk=event_id)
-    else:
-        instance = Event()
+    instance = Event(calendar_id=calendar_id)
     
     form = EventForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():
@@ -142,7 +140,8 @@ def group(request, group_id=None):
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})
 
-def calendar(request, group_id=None):
+@login_required
+def calendarCreate(request, group_id=None):
     instance = Calendar()
   
     #instance = Calendar()

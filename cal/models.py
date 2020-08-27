@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 
 class CalendarGroups(models.Model):
     GRP = (
@@ -38,7 +39,14 @@ class Event(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
-    calendar = models.ForeignKey(Calendar, on_delete = models.CASCADE) 
+    calendar = models.ForeignKey(Calendar, on_delete = models.CASCADE)
+
+    #PROVA
+    """"
+    def check_overlap(self, fixed_start, fixed_end, new_end):
+        overlap = False
+        if new_start == fixed_end or new_
+    """
 
     @property
     def get_html_url(self):

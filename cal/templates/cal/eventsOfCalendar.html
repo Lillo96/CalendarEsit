@@ -21,7 +21,13 @@
 		<main class="inner cove border" role="main" style="background-color: white;">
 			<h1 class="cover-heading mt-3">Lista Eventi di</h1>
 			
-			<!-- <a class="btn btn-info right" href="{% url 'cal:event_new' %}"> Crea Evento </a> -->
+			 {% if user.is_authenticated %}
+			     <li>User: {{ user.get_username }}</li>
+			     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
+			   {% else %}
+			     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
+			   {% endif %} 
+
 
 			<div class="mt-5">
 				<ul class="list-group">
@@ -34,7 +40,7 @@
 			</div>
 
 		<a href="calendar" class="btn btn-primary btn-lg active mt-5 mb-5" role="button" aria-pressed="true">Vai al calendario</a>
-		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="{% url 'cal:event_new' %}">Crea Evento</a>
+		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="{% url 'cal:event_new' view.kwargs.group_id view.kwargs.calendar_id %}">Crea Evento</a>
 
 		</main>
 	</div>
