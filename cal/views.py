@@ -83,7 +83,7 @@ class CalendarView(LoginRequiredMixin, generic.ListView):
         cal = CalendarUtils(d.year, d.month, calendar_id)
 
         # Call the formatmonth method, which returns our calendar as a table
-        html_cal = cal.formatmonth(withyear=True)
+        html_cal = cal.formatmonth(d.year, d.month, withyear=True)
         context['calendar_view'] = mark_safe(html_cal)
         
         context['prev_month'] = prev_month(d)
