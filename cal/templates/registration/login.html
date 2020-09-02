@@ -1,0 +1,87 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'cal/css/styles.css' %}">
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css"/>
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/global.css"/>
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
+  <title>Calendar</title>
+</head>
+<body class="text-center mt-5">
+	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+		<main class="inner cove border" role="main" style="background-color: white;">
+			<h1 class="cover-heading mt-3">Login</h1>
+			
+
+
+			<!--
+			 <ul class="sidebar-nav">
+
+			 
+			   {% if user.is_authenticated %}
+			     <li>User: {{ user.get_username }}</li>
+			     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
+			   {% else %}
+			     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
+			   {% endif %} 
+			  </ul>	
+			-->		
+
+			{% if form.errors %}
+			  <p>Your username and password didn't match. Please try again.</p>
+			{% endif %}
+
+			{% if next %}
+			  {% if user.is_authenticated %}
+			    <p>Your account doesn't have access to this page. To proceed,
+			    please login with an account that has access.</p>
+			  {% else %}
+			    <p>Please login to see this page.</p>
+			  {% endif %}
+			{% endif %}
+
+			<form method="post" action="{% url 'login' %}">
+			{% csrf_token %}
+			<table>
+
+			<tr>
+			  <td>{{ form.username.label_tag }}</td>
+			  <td>{{ form.username }}</td>
+			</tr>
+
+			<tr>
+			  <td>{{ form.password.label_tag }}</td>
+			  <td>{{ form.password }}</td>
+			</tr>
+			</table>
+
+			<input type="submit" value="login" />
+			<input type="hidden" name="next" value="{{ next }}" />
+			</form>
+
+			{# Assumes you setup the password_reset view in your URLconf #}
+			<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+
+		</main>
+	</div>
+
+	<!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+</body>
+</html>
