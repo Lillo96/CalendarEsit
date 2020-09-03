@@ -1,22 +1,25 @@
 from django.conf.urls import url
+from django.urls import path
 from . import views
 
 app_name = 'cal'
 urlpatterns = [
     url(r'^$', views.hello, name='hello'), #Prova
-    url(r'^home/$', views.GroupCalendarView.as_view(), name='home'), #Prova
-    url(r'^home/(?P<group_id>\d+)/$', views.CalendarsOfGroupView.as_view(), name='group_view'), #Prova
-    url(r'^home/(?P<group_id>\d+)/(?P<calendar_id>\d+)/$', views.EventsOfCalendarView.as_view(), name='events_view'), #Prova
-    url(r'^home/(?P<group_id>\d+)/(?P<calendar_id>\d+)/calendar/$', views.CalendarView.as_view(), name='calendar_view'), #Prova
-    #url(r'^home/event/new/$', views.event, name='event_new'), #Prova
+   
+    ########
 
-    #New Qualcosa
-    url(r'^home/group/new/$', views.group, name='group_new'), #Prova
-    url(r'^home/(?P<group_id>\d+)/calendar/new/$', views.calendarCreate, name='calendar_new'), #Prova
-    url(r'^home/(?P<group_id>\d+)/(?P<calendar_id>\d+)/event/new/$', views.event, name='event_new'), #Prova
+    path('homeProva1/', views.CalendarGroupList.as_view(), name='home'), #LISTA EDIFICI OK
+    path('homeProva1/<int:pk>/calendars/', views.CalendarsOfGroupList.as_view()), #LISTA CALENDARI DI QUEL PK EDIFICIO OK
+    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarList.as_view()), #LISTA EVENTI DI QUEL PK CALENDARIO OK
+    
+    url('homeProva1/(?P<group_id>\d+)/calendars/(?P<calendar_id>\d+)/events/calendar/$', views.CalendarView.as_view(), name='calendar_view'), #CALENDARIO OK
 
-    url(r'^index/$', views.index, name='index'),
-    url(r'^calendar/$', views.CalendarView.as_view(), name='calendar'), # here
-    #url(r'^event/new/$', views.event, name='event_new'),
-    url(r'^event/edit/(?P<event_id>\d+)/$', views.event, name='event_edit'),
+    path('homeProva1/group/new/', views.group, name='group_newprova1'), #NUOVO GRUPPO OK
+    path('homeProva1/<int:pk>/calendars/new/', views.calendarCreate, name='calendar_newprova1'), #NUOVO CALENDARIO OK
+    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/new/', views.event, name='event_newprova1'), #NUOVO EVENTO OK
+
+    path('mqtt/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarListNode.as_view()),
+
+
+    ########
 ]

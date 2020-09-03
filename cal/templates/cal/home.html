@@ -32,14 +32,14 @@
 			<div class="mt-5">
 				<ul class="list-group">
 					{% for group in object_list %}
-			   	 	<a href="{{ group.id }}"><li class="list-group-item list-group-item-action">{{ group.name }}</li></a>
+			   	 	<a href="{{ group.id }}/calendars/"><li class="list-group-item list-group-item-action">{{ group.name }}</li></a>
 					{% empty %}
 			    		<li class="list-group-item">Non ci sono edifici disponibili</li>
 					{% endfor %}
 				</ul>
 			</div>
 			{% if user.is_staff %}
-			<a class="btn btn-primary btn-lg active mt-5 mb-5" href="{% url 'cal:group_new' %}">Aggiungi edifico</a>
+			<a class="btn btn-primary btn-lg active mt-5 mb-5" href="group/new">Aggiungi edifico</a>
 			{% endif %}
 		</main>
 	</div>

@@ -33,18 +33,20 @@
 			
 			<div class="mt-5">
 				<ul class="list-group">
+					
 					{% for calendar in object_list %}
-			   	 	<a href="{{ calendar.id }}"><li class="list-group-item list-group-item-action">{{ calendar.name }}</li></a>
+			   	 	<a href="{{ calendar.id }}/events/"><li class="list-group-item list-group-item-action">{{ calendar.name }}</li></a>
 					{% empty %}
 			    		<li class="list-group-item">Non ci sono calendari disponibili per questo edificio</li>
 					{% endfor %}
+				
 				</ul>
 			</div>
 			
 		</main>
 	<!-- NUOVO CALENDARIO -->
 		{% if user.is_staff %}
-		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="{% url 'cal:calendar_new' view.kwargs.group_id %}">Aggiungi Calendario</a>
+		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="new">Aggiungi Calendario</a>
 		{% endif %}
 	</div>
 
