@@ -3,13 +3,10 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 from datetime import datetime
+from datetime import date
 
 class CalendarGroups(models.Model):
-    GRP = (
-       ('Palazzo delle Scienze', 'Palazzo delle Scienze'),
-       ('Mem', 'Mem'),
-    )
-
+   
     name = models.CharField(max_length = 155, blank=True, null=True, unique=True)
 
     def __str__(self):
@@ -63,12 +60,13 @@ class Event(models.Model):
  
     def clean(self):
         
-        ######### IMPORTANTE UPDARE OOOKKKKK #################
-        """
-        if datetime.now() > self.day:
-            raise ValidationError('Il giorno e\' prima di quello di oggi')
-        """
-        ######################################################
+        if date.today() > self.day:
+            raise ValidationError('Errore, non puoi inserire un giorno del passato')
+
+        nowtime = datetime.now().time()
+        if nowtime >= self.start_time:
+            raise ValidationError('Errore, non puoi inserire un orario del passato')
+        
         if self.end_time <= self.start_time:
             raise ValidationError('Ending times must after starting times')
         
@@ -79,28 +77,6 @@ class Event(models.Model):
                     raise ValidationError(
                         'There is an overlap with another event: ' + str(event.day) + ', ' + str(
                             event.start_time) + '-' + str(event.end_time))
-
-    """ #No sdrebidi 
-    class Meta:
-        verbose_name = u'Scheduling'
-        verbose_name_plural = u'Scheduling'
-    """
-
-    """
-    classrom = models.CharField(max_length=200) #Da togliere
-    #classrom = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=200)
-    description = models.TextField() #Vorrei toglierla
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-
-    calendar = models.ForeignKey(Calendar, on_delete = models.CASCADE)
-
-    #PROVA
-    """
-    #def check_overlap(self, fixed_start, fixed_end, new_end):
-        #overlap = False
-        #if new_start == fixed_end or new_
     
     @property
     def get_html_url(self):
