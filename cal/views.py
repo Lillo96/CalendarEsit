@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from .publisher import main
 
 ################
 
@@ -257,6 +258,8 @@ def event(request, pk=None ,pk1=None):
     form = EventForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():
         form.save()
+	#args= (str(pk)+ ","+str(pk1))
+        main(pk,pk1)
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})
 

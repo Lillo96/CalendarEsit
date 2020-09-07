@@ -117,18 +117,19 @@ def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
 
 def on_publish(client,userdata,result):            #create function for callback
+    print(result)
     print("data published \n")
     pass
 
-def start():
+def init_client():
     access_key = os.environ["AWS_ACCESS_KEY_ID"]
     secret_key = os.environ["AWS_SECRET_ACCESS_KEY"]
     port = 443
 
-    region = "us-east-1"
+    region = "us-east-2"
 
     # This is specific to your AWS account
-    host = "a3pwbt0axh6wnd-ats.iot.us-east-1.amazonaws.com".format(region)
+    host = "a3pwbt0axh6wnd-ats.iot.us-east-2.amazonaws.com".format(region)
 
     extra_headers = functools.partial(
         get_amazon_auth_headers,
@@ -150,8 +151,11 @@ def start():
 
     client.tls_set()
     client.connect(host, 443,60)
-    print("After the connection");
-    ret= client.publish("ciao","pubblico")
-    client.loop_start() 
+    
+    return client
+    #print("After the connection");
+    #client.publish("ciao","stato:pubblico")
+    #client.subscribe("group",0)
+    #client.loop_start() 
 
 
