@@ -138,7 +138,19 @@ class EventsOfCalendarListNode(APIView):
     """
     def get_object(self, pk, pk1):
         try:
-            return Event.objects.filter(calendar=pk1)
+            #filtro eventi per ottenere solo quelli di oggi
+            events= Event.objects.filter(calendar=pk1,day=date.today()).order_by('start_time')
+            #filtro per ottenere o evento in corso o prossimo evento
+            if events.exists():
+               nowtime=datetime.now().time()
+               for e in events:
+                  #evento in corso
+                  if (e.start_time <= nowtime and e.end_time >= nowtime):
+                     return e
+                  #evento prossimo
+                  elif (e.start_time > nowtime):
+                     return e
+            return events
         except Event.DoesNotExist:
             raise Http404
 
@@ -258,8 +270,15 @@ def event(request, pk=None ,pk1=None):
     form = EventForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():
         form.save()
-	#args= (str(pk)+ ","+str(pk1))
-        main(pk,pk1)
+        #controllo se evento appena aggiunto si svolgerà prima di un dato tempo ed in caso richiamo il publisher
+        e = Event.objects.filter(calendar=pk1).latest('id')
+        now= datetime.now().time()
+        #trasformo orari in int per poter sottrarre
+        now= int(now.strftime('%H%M%S'))
+        temp= int(e.start_time.strftime('%H%M%S'))
+        #se l'evento avviene fra meno di un ora chiamo la publish
+        if((temp-now) < 6000):
+           main(pk,pk1)
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})
 

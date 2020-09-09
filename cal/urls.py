@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from django.urls import path
 from . import views
-
+from .publisher import publishEvent
+from background_task.models import Task
 app_name = 'cal'
 urlpatterns = [
     url(r'^$', views.hello, name='hello'), #Prova
@@ -23,3 +24,7 @@ urlpatterns = [
 
     ########
 ]
+print("prima di chiamare publish event")
+if not Task.objects.filter(verbose_name="publishEvent").exists():
+   publishEvent(repeat=10, verbose_name="publishEvent")
+   print("publish event inizializzato")
