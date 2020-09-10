@@ -4,6 +4,8 @@ import datetime
 
 import requests
 
+import json
+
 
 from .mqtt_iot import init_client   
 from background_task import background
@@ -25,12 +27,13 @@ def main(arg1,arg2):
    params= {'pk':arg1,'pk1':arg2}
    url = 'http://127.0.0.1:8000/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
    resp = requests.get(url=url)
-   json = resp.json()
+   json1 = resp.json()
    
-   print(json)
+   j = json.dumps(json1)
+   print("ciao", j)
   
    print("try to publish")
-   mqttc.publish(topic, str(json))
+   mqttc.publish(topic, j)
    print("Time publish")
    time.sleep(1)
 

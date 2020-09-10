@@ -145,7 +145,7 @@ class EventsOfCalendarListNode(APIView):
             if events.exists():
                nowtime=datetime.now().time()
                for e in events:
-                  #print(e.day)
+                  print("PROVA", e)
                   #evento in corso
                   if (e.start_time <= nowtime and e.end_time >= nowtime):
                      return e
@@ -160,9 +160,9 @@ class EventsOfCalendarListNode(APIView):
 
     def get(self, request, pk, pk1, format=None):
         event = self.get_object(pk, pk1)
-        print(event)
+        print("OK", event)
         
-        if (event != []):
+        if (event != [] and event != None):
             serializer = EventSerializer(event)
         else:
             serializer = EventSerializer(event, many=True)
