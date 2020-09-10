@@ -19,7 +19,7 @@ def main(arg1,arg2):
    print("client initialized")
    print(arg1)
    print(arg2)
-   topic = "test/event"
+   topic = "$aws/things/%s-%s/shadow/update" % (arg1,arg2)
 
    #accesscode = requests.GET.get('code')
    params= {'pk':arg1,'pk1':arg2}
