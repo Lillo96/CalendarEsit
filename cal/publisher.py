@@ -15,7 +15,7 @@ from .models import CalendarGroups,Calendar
 
 def main(arg1,arg2):
    ##mqttc = mqtt.Client()	
-   #mqttc = init_client()
+   mqttc = init_client()
    print("client initialized")
    print(arg1)
    print(arg2)
@@ -30,7 +30,7 @@ def main(arg1,arg2):
    print(json)
   
    print("try to publish")
-   #mqttc.publish(topic, str(json))
+   mqttc.publish(topic, str(json))
    print("Time publish")
    time.sleep(1)
 
