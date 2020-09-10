@@ -32,7 +32,7 @@
 			<div class="mt-5">
 				<ul class="list-group">
 					{% for event in object_list %}
-			   	 	<a><li class="list-group-item list-group-item-action">Titolo: {{ event.title }} - Start time: {{ event.start_time }}, End time: {{ event.end_time }} </li></a>
+			   	 	<a><li class="list-group-item list-group-item-action">ID: {{ event.id }} - Titolo: {{ event.title }} - Data: {{ event.day }} - Start time: {{ event.start_time }}, End time: {{ event.end_time }} </li></a>
 					{% empty %}
 			    		<li class="list-group-item">Non ci sono eventi programmati per questo calendario</li>
 					{% endfor %}

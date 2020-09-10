@@ -63,10 +63,12 @@ class Event(models.Model):
         if date.today() > self.day:
             raise ValidationError('Errore, non puoi inserire un giorno del passato')
 
+        """
         nowtime = datetime.now().time()
         if nowtime >= self.start_time:
             raise ValidationError('Errore, non puoi inserire un orario del passato')
-        
+        """
+
         if self.end_time <= self.start_time:
             raise ValidationError('Ending times must after starting times')
         

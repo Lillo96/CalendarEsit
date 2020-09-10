@@ -140,23 +140,33 @@ class EventsOfCalendarListNode(APIView):
         try:
             #filtro eventi per ottenere solo quelli di oggi
             events= Event.objects.filter(calendar=pk1,day=date.today()).order_by('start_time')
+            #print(events)
             #filtro per ottenere o evento in corso o prossimo evento
             if events.exists():
                nowtime=datetime.now().time()
                for e in events:
+                  #print(e.day)
                   #evento in corso
                   if (e.start_time <= nowtime and e.end_time >= nowtime):
                      return e
                   #evento prossimo
                   elif (e.start_time > nowtime):
                      return e
-            return events
+            #return events
+            else:
+               return []
         except Event.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, pk1, format=None):
         event = self.get_object(pk, pk1)
-        serializer = EventSerializer(event, many=True)
+        print(event)
+        
+        if (event != []):
+            serializer = EventSerializer(event)
+        else:
+            serializer = EventSerializer(event, many=True)
+
         return Response(serializer.data)
         
        
@@ -211,7 +221,7 @@ class EventsOfCalendarView(LoginRequiredMixin, generic.ListView):
         object_list = Event.objects.filter(calendar=calendar_id)
         context.update({'object_list': object_list})
         
-        print (context)
+        #print (context)
 
         return context    
      
@@ -277,8 +287,10 @@ def event(request, pk=None ,pk1=None):
         now= int(now.strftime('%H%M%S'))
         temp= int(e.start_time.strftime('%H%M%S'))
         #se l'evento avviene fra meno di un ora chiamo la publish
+        
         if((temp-now) < 6000):
            main(pk,pk1)
+        
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})
 
