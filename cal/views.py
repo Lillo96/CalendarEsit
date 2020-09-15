@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .publisher import main
+from .publisher import publish
 
 ################
 
@@ -289,7 +289,7 @@ def event(request, pk=None ,pk1=None):
         #se l'evento avviene fra meno di un ora chiamo la publish
         
         if((temp-now) < 6000):
-           main(pk,pk1)
+           publish(pk,pk1)
         
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})

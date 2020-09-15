@@ -15,7 +15,7 @@ from paho.mqtt.client import *
 
 from .models import CalendarGroups,Calendar
 
-def main(arg1,arg2):
+def publish(arg1,arg2):
    ##mqttc = mqtt.Client()	
    mqttc = init_client()
    print("client initialized")
@@ -37,10 +37,10 @@ def main(arg1,arg2):
    print("Time publish")
    time.sleep(1)
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
    
-   import sys
-   main(sys.argv[1:])
+#   import sys
+#   main(sys.argv[1:])
 
 
 #funzione da attivare in background per inviare eventi in corso o prossimi a iot
@@ -51,7 +51,7 @@ def publishEvent():
    calendars = Calendar.objects.all()
    for group in groups:
       for calendar in calendars.filter(group_id=group.id):
-         main(group.id,calendar.id)
+         publish(group.id,calendar.id)
 
 
 
