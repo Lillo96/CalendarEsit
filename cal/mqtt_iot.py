@@ -113,7 +113,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("event/test")
 
 # The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg)
+def on_message(client, userdata, msg):
     print("Messaggio ricevuto dal topic sottoscritto:")
     print(msg.topic+" "+str(msg.payload))
     
@@ -159,5 +159,5 @@ def init_client():
     #client.publish("ciao","stato:pubblico")
     #client.subscribe("group",0)
     #client.loop_start() 
-
+client = init_client()
 
