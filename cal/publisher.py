@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
 
 #funzione da attivare in background per inviare eventi in corso o prossimi a iot
-@background(schedule=10)
+@background(schedule=100)
 def publishEvent():
    print("dentro publish event")
    groups= CalendarGroups.objects.all()
