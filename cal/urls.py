@@ -25,6 +25,7 @@ urlpatterns = [
     ########
 ]
 print("prima di chiamare publish event")
+Task.objects.all().delete()
 if not Task.objects.filter(verbose_name="publishEvent").exists():
    publishEvent(repeat=100, verbose_name="publishEvent")
    print("publish event inizializzato")
