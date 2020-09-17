@@ -1,12 +1,13 @@
 import base64
-import datetime
+import datetime as datet
 import functools
 import hashlib
 import hmac
 import os
 import uuid
+import json
 
-
+#from publisher import publish
 from paho.mqtt.client import Client
 
 #host = "a3pwbt0axh6wnd-ats.iot.us-east-1.amazonaws.com"
@@ -48,7 +49,7 @@ def get_amazon_auth_headers(access_key, secret_key, region, host, port, headers=
     service = "iotdevicegateway"
     algorithm = "AWS4-HMAC-SHA256"
 
-    t = datetime.datetime.utcnow()
+    t = datet.datetime.utcnow()
     amzdate = t.strftime('%Y%m%dT%H%M%SZ')
     datestamp = t.strftime("%Y%m%d") # Date w/o time, used in credential scope
 
@@ -111,12 +112,56 @@ def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("event/test")
+    client.subscribe("event/new")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print("Messaggio ricevuto dal topic sottoscritto:")
-    print(msg.topic+" "+str(msg.payload))
+    print(msg.topic)
     
+    #convert byte json to json object and then to python dict to extract urls parameters
+    print(type(msg.payload))
+    byte_payload = msg.payload
+    string_payload = byte_payload.decode('utf-8')
+    data_dict = json.loads(string_payload)
+    print("data type: ")
+    print(type(data_dict))
+    print("json estratto")
+    group_id = data_dict['group_id']
+    calendar_id = data_dict['calendar_id']
+    print("calendar_id: ")
+    print(calendar_id)
+    #in base al topic su cui ho ricevuto il messaggio faccio un azione o l'altra
+    if ( msg.topic == "event/update"):
+       #invio l'evento più prossimo alla board 
+       client.publish(group_id,calendar_id)
+    elif ( msg.topic == "event/new"):
+       #il messaggio attiverà l'aggiunta di un evento facendo una post sul link adatto
+       url = 'http://127.0.0.1:8000/homeProva1/%d/calendars/%d/events/new/' % (group_id,calendar_id)
+       print(url)
+       now= datet.datetime.now().time()
+       end_time = datet.datetime.now() + datet.timedelta(hours=1)
+       end_time = end_time.strftime("%H:%M:%S")
+       now = now.strftime("%H:%M:%S")
+       dt = datet.datetime.today()
+       dt = dt.strftime("%Y-%m-%d")
+       print(now)
+       print(end_time)
+       print(dt)
+       #di default la prenotazione viene effettuata per 1 ora
+       print("dati form aggiunta evento")
+       
+       title = "Evento Node"
+       description = "Evento prenotato in loco"
+    
+       payload = {"title": title, "day": dt, "start_time": now, "end_time": end_time, "notes":description}
+       
+       print("Payload")
+       print(type(payload))
+       print(payload)
+       resp = requests.post(url,data=payload)
+       content= response.content
+       print (content)
 
 def on_publish(client,userdata,result):            #create function for callback
     print(result)
@@ -124,6 +169,7 @@ def on_publish(client,userdata,result):            #create function for callback
     pass
 
 def init_client():
+    #variabili di sistema settate 
     access_key = os.environ["AWS_ACCESS_KEY_ID"]
     secret_key = os.environ["AWS_SECRET_ACCESS_KEY"]
     port = 443

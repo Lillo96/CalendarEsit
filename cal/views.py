@@ -273,13 +273,16 @@ def next_month(d):
     return month
 
 @login_required
-def event(request, pk=None ,pk1=None):
+def addEvent(request, pk=None ,pk1=None):
+    print("sono dentro add event")
     instance = Event()
     instance = Event(calendar_id=pk1)
     
     form = EventForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():
+        print(form)
         form.save()
+        print("form valido")
         #controllo se evento appena aggiunto si svolgerà prima di un dato tempo ed in caso richiamo il publisher
         e = Event.objects.filter(calendar=pk1).latest('id')
         now= datetime.now().time()
@@ -293,6 +296,24 @@ def event(request, pk=None ,pk1=None):
         
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})
+
+#fucntion that handle inserting a new event when a message from the Node is recieved
+def addNodeEvent(request, pk = None):
+    instance = Event()
+    now= datetime.now().time()
+    #di default la prenotazione viene effettuata per 1 ora
+    hprenotation = 1
+    hours_added = datetime.timedelta(hours = hprenotation)
+    end_time = now + hours_added
+    instance = Event(calendar_id = pk, title = "Evento Node", start_time = now, end_time= end_time) 
+    print("istanza evento inizializzata")
+    if request.POST:
+        print("richiesta post effettuata")
+        instance.save()
+        print("istanza salvata")
+    return HttpResponse()    
+
+
 
 @login_required
 def group(request):

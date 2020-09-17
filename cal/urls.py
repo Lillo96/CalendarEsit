@@ -17,10 +17,12 @@ urlpatterns = [
 
     path('homeProva1/group/new/', views.group, name='group_newprova1'), #NUOVO GRUPPO OK
     path('homeProva1/<int:pk>/calendars/new/', views.calendarCreate, name='calendar_newprova1'), #NUOVO CALENDARIO OK
-    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/new/', views.event, name='event_newprova1'), #NUOVO EVENTO OK
+    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/new/', views.addEvent, name='event_newprova1'), #NUOVO EVENTO OK
 
     path('mqtt/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarListNode.as_view()),
-
+    
+    path('mqtt/addEvent/<int:pk>', views.addNodeEvent, name='addNodeEvent'),
+    
 
     ########
 ]
