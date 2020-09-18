@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from .publisher import publishEvent
 from background_task.models import Task
+
 app_name = 'cal'
 urlpatterns = [
     url(r'^$', views.hello, name='hello'), #Prova
@@ -21,13 +22,11 @@ urlpatterns = [
 
     path('mqtt/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarListNode.as_view()),
     
-    path('mqtt/addEvent/<int:pk>', views.addNodeEvent, name='addNodeEvent'),
-    
 
     ########
 ]
 
 Task.objects.all().delete()
 if not Task.objects.filter(verbose_name="publishEvent").exists():
-   publishEvent(repeat=100, verbose_name="publishEvent")
-   print("publish event inizializzato")
+   publishEvent(repeat=30, verbose_name="publishEvent")
+   print("publish event in background inizializzato")

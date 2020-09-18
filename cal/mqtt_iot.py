@@ -7,10 +7,11 @@ import os
 import uuid
 import json
 
-#from publisher import publish
+import requests
+
+
 from paho.mqtt.client import Client
 
-#host = "a3pwbt0axh6wnd-ats.iot.us-east-1.amazonaws.com"
 
 def get_amazon_auth_headers(access_key, secret_key, region, host, port, headers=None):
     """ Get the amazon auth headers for working with the amazon websockets
@@ -134,7 +135,7 @@ def on_message(client, userdata, msg):
     #in base al topic su cui ho ricevuto il messaggio faccio un azione o l'altra
     if ( msg.topic == "event/update"):
        #invio l'evento più prossimo alla board 
-       client.publish(group_id,calendar_id)
+       publish(group_id,calendar_id)
     elif ( msg.topic == "event/new"):
        #il messaggio attiverà l'aggiunta di un evento facendo una post sul link adatto
        url = 'http://127.0.0.1:8000/homeProva1/%d/calendars/%d/events/new/' % (group_id,calendar_id)
@@ -159,14 +160,16 @@ def on_message(client, userdata, msg):
        print("Payload")
        print(type(payload))
        print(payload)
+       
        resp = requests.post(url,data=payload)
        content= response.content
        print (content)
 
 def on_publish(client,userdata,result):            #create function for callback
-    print(result)
-    print("data published \n")
-    pass
+   
+   print(result)
+   print("data published \n")
+   pass
 
 def init_client():
     #variabili di sistema settate 
@@ -206,4 +209,24 @@ def init_client():
     #client.subscribe("group",0)
     #client.loop_start() 
 client = init_client()
+
+def publish(arg1,arg2):
+   print(arg1)
+   print(arg2)
+   topic = "$aws/things/%d-%d/shadow/update" % (arg1,arg2)
+
+   params= {'pk':arg1,'pk1':arg2}
+   url = 'http://127.0.0.1:8000/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
+   resp = requests.get(url=url)
+   json1 = resp.json()
+   
+   j = json.dumps(json1)
+   print("evento in json: " + j)
+  
+   print("try to publish")
+   #client1 = init_client()
+   client.publish(topic, j)
+   
+   
+
 
