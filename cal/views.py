@@ -275,7 +275,6 @@ def next_month(d):
     return month
 
 @csrf_exempt
-@login_required
 def addEvent(request, pk=None ,pk1=None):
     print("sono dentro add event")
     instance = Event()

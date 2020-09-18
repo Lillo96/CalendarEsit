@@ -76,6 +76,7 @@ class Event(models.Model):
         if events.exists():
             for event in events:
                 if self.check_overlap(event.start_time, event.end_time, self.start_time, self.end_time):
+                    print ("Overlap Error!")
                     raise ValidationError(
                         'There is an overlap with another event: ' + str(event.day) + ', ' + str(
                             event.start_time) + '-' + str(event.end_time))

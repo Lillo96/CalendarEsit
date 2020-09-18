@@ -11,7 +11,7 @@ import requests
 
 
 from paho.mqtt.client import Client
-
+MQTT_TOPIC = [("event/new",0),("event/update",0)]
 
 def get_amazon_auth_headers(access_key, secret_key, region, host, port, headers=None):
     """ Get the amazon auth headers for working with the amazon websockets
@@ -112,8 +112,8 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("event/test")
-    client.subscribe("event/new")
+    client.subscribe(MQTT_TOPIC)
+    #client.subscribe("event/new")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -224,7 +224,7 @@ def publish(arg1,arg2):
    print("evento in json: " + j)
   
    print("try to publish")
-   #client1 = init_client()
+   client = init_client()
    client.publish(topic, j)
    
    
