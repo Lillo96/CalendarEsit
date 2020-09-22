@@ -28,5 +28,5 @@ urlpatterns = [
 
 Task.objects.all().delete()
 if not Task.objects.filter(verbose_name="publishEvent").exists():
-   publishEvent(repeat=30, verbose_name="publishEvent")
+   publishEvent(repeat=60, verbose_name="publishEvent")
    print("publish event in background inizializzato")

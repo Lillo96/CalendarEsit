@@ -13,7 +13,7 @@ from background_task import background
 from .models import CalendarGroups,Calendar
 
 #funzione da attivare in background per inviare eventi in corso o prossimi a iot
-@background(schedule=10)
+@background(schedule=60)
 def publishEvent():
    print("dentro publish event")
    groups= CalendarGroups.objects.all()

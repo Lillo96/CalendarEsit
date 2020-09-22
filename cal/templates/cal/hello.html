@@ -19,17 +19,19 @@
   <title>Calendar</title>
 </head>
 <body class="text-center mt-5">
-	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-		<main class="inner cove border" role="main" style="background-color: white;">
+	<div class="cover-container d-flex w-100 h-100 p-5 mx-auto flex-column">
+		<main class="inner cove border p-5" role="main" style="background-color: white;">
 		{% if user.is_authenticated %}
-		<p>Ciao, benvenuto {{ user.get_username }}</p>
-		<p>Se vuoi uscire, clicca qui: </p><li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>		
-		<p>Clicca qui per iniziare a navigare nel sito</p>
-		<li><a href="{% url 'cal:home' %}">Home</a></li>
-		{% else %}
-		<p>Ciao, dovresti fare il login</p>
-		<li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
-		{% endif %} 
+			<h1>Benvenuto {{ user.get_username }}</h1>
+			<h5 class="text-muted"">Se vuoi uscire, clicca qui:</h5>
+			<a class="btn btn-primary btn-sm mb-3" role="button" aria-pressed="true" href="{% url 'logout'%}?next={{request.path}}">Logout</a>	
+			<h5 class="text-muted">Clicca qui per iniziare a navigare nel sito</h5>
+			<a class="btn btn-primary btn-sm mb-3" role="button" aria-pressed="true" href="{% url 'cal:home' %}">Home</a>
+				{% else %}
+					<h1>Benvenuto</h1>
+					<p class="text-muted">Fai il login per accedere ai nosrtri servizi</p>
+					<a class="btn btn-primary" href="{% url 'login'%}?next={{request.path}}">Login</a>
+				{% endif %} 
 
 <!--
 			{% if user.is_authenticated %}

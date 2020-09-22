@@ -7,6 +7,7 @@ import os
 import uuid
 import json
 
+import time
 import requests
 
 
@@ -167,9 +168,9 @@ def on_message(client, userdata, msg):
 
 def on_publish(client,userdata,result):            #create function for callback
    
-   print(result)
-   print("data published \n")
-   pass
+    print(result)
+    print("data published \n")
+    pass
 
 def init_client():
     #variabili di sistema settate 
@@ -207,26 +208,27 @@ def init_client():
     #print("After the connection");
     #client.publish("ciao","stato:pubblico")
     #client.subscribe("group",0)
-    #client.loop_start() 
-client = init_client()
+    #client.loop_start()
 
 def publish(arg1,arg2):
-   print(arg1)
-   print(arg2)
-   topic = "$aws/things/%d-%d/shadow/update" % (arg1,arg2)
-
-   params= {'pk':arg1,'pk1':arg2}
-   url = 'http://127.0.0.1:8000/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
-   resp = requests.get(url=url)
-   json1 = resp.json()
+    print(arg1)
+    print(arg2)
+    topic1 = "$aws/things/%d-%d/shadow/update" % (arg1,arg2)
+    
+    params= {'pk':arg1,'pk1':arg2}
+    url = 'http://127.0.0.1:8000/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
+    resp = requests.get(url=url)
+    json1 = resp.json()
    
-   j = json.dumps(json1)
-   print("evento in json: " + j)
+    j = json.dumps(json1)
+    print("evento in json: " + j)
   
-   print("try to publish")
-   client = init_client()
-   client.publish(topic, j)
-   
-   
+    print("try to publish")
+    client = init_client()
+    print("Post init_client()")
+    client.publish(topic1, j)
+    time.sleep(1)   
+
+client = init_client()
 
 
