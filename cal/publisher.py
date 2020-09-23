@@ -12,6 +12,8 @@ from background_task import background
 
 from .models import CalendarGroups,Calendar
 
+from mqtt_iot import client
+
 #funzione da attivare in background per inviare eventi in corso o prossimi a iot
 @background(schedule=60)
 def publishEvent():
@@ -20,7 +22,7 @@ def publishEvent():
    calendars = Calendar.objects.all()
    for group in groups:
       for calendar in calendars.filter(group_id=group.id):
-         publish(group.id,calendar.id)
+         publish(group.id,calendar.id,client)
 
 
 

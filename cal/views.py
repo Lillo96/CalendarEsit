@@ -33,6 +33,8 @@ from cal.serializers import CalendarGroupsSerializer, CalendarSerializer, EventS
 from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
 
+from mqtt_iot import client
+
 class CalendarGroupList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/home.html'
@@ -294,7 +296,7 @@ def addEvent(request, pk=None ,pk1=None):
         #se l'evento avviene fra meno di un ora chiamo la publish
         
         if((temp-now) < 6000):
-           publish(pk,pk1)
+           publish(pk,pk1,client)
         
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form})

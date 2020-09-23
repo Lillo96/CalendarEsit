@@ -136,7 +136,7 @@ def on_message(client, userdata, msg):
     #in base al topic su cui ho ricevuto il messaggio faccio un azione o l'altra
     if ( msg.topic == "event/update"):
        #invio l'evento più prossimo alla board 
-       publish(group_id,calendar_id)
+       publish(group_id,calendar_id,client)
     elif ( msg.topic == "event/new"):
        #il messaggio attiverà l'aggiunta di un evento facendo una post sul link adatto
        url = 'http://127.0.0.1:8000/homeProva1/%d/calendars/%d/events/new/' % (group_id,calendar_id)
@@ -210,7 +210,7 @@ def init_client():
     #client.subscribe("group",0)
     #client.loop_start()
 
-def publish(arg1,arg2):
+def publish(arg1,arg2,client):
     print(arg1)
     print(arg2)
     topic1 = "$aws/things/%d-%d/shadow/update" % (arg1,arg2)
@@ -224,8 +224,8 @@ def publish(arg1,arg2):
     print("evento in json: " + j)
   
     print("try to publish")
-    client = init_client()
-    print("Post init_client()")
+    #client = init_client()
+    #print("Post init_client()")
     client.publish(topic1, j)
     time.sleep(1)   
 
