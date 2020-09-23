@@ -139,7 +139,7 @@ def on_message(client, userdata, msg):
        publish(group_id,calendar_id,client)
     elif ( msg.topic == "event/new"):
        #il messaggio attiverà l'aggiunta di un evento facendo una post sul link adatto
-       url = 'http://127.0.0.1:8000/homeProva1/%d/calendars/%d/events/new/' % (group_id,calendar_id)
+       url = 'http://3.222.102.91/homeProva1/%d/calendars/%d/events/new/' % (group_id,calendar_id)
        print(url)
        now= datet.datetime.now().time()
        end_time = datet.datetime.now() + datet.timedelta(hours=1)
@@ -216,7 +216,7 @@ def publish(arg1,arg2,client):
     topic1 = "$aws/things/%d-%d/shadow/update" % (arg1,arg2)
     
     params= {'pk':arg1,'pk1':arg2}
-    url = 'http://127.0.0.1:8000/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
+    url = 'http://3.222.102.91/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
     resp = requests.get(url=url)
     json1 = resp.json()
    
