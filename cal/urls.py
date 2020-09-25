@@ -11,8 +11,8 @@ urlpatterns = [
     ########
 
     path('homeProva1/', views.CalendarGroupList.as_view(), name='home'), #LISTA EDIFICI OK
-    path('homeProva1/<int:pk>/calendars/', views.CalendarsOfGroupList.as_view()), #LISTA CALENDARI DI QUEL PK EDIFICIO OK
-    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarList.as_view()), #LISTA EVENTI DI QUEL PK CALENDARIO OK
+    path('homeProva1/<int:pk>/calendars/', views.CalendarsOfGroupList.as_view(), name='list_calendar'), #LISTA CALENDARI DI QUEL PK EDIFICIO OK
+    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarList.as_view(), name='list_event'), #LISTA EVENTI DI QUEL PK CALENDARIO OK
     
     url('homeProva1/(?P<group_id>\d+)/calendars/(?P<calendar_id>\d+)/events/calendar/$', views.CalendarView.as_view(), name='calendar_view'), #CALENDARIO OK
 

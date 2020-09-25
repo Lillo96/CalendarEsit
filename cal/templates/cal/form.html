@@ -1,20 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
 
-{% extends 'cal/base.html' %}
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'cal/css/styles.css' %}">
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css"/>
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/global.css"/>
+  <link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
+  <title>Calendar</title>
+</head>
+<body class="text-center mt-5">
+	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+		<main class="inner cove border" role="main" style="background-color: white;">
 
-{% block title %}
-Event
-{% endblock %}
+			<nav class="navbar navbar-light bg-light">
+	{% if user.is_authenticated %}
+	<a class="navbar-brand">Ciao, {{ user.get_username }} </a>
+	<p class="navbar-brand text-muted"> <script> document.write(new Date().toLocaleString('en-US')); </script> </p>
+	<form class="form-inline">
+			    <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
+			    	<!--<a href="{% 'cal:home' }">Home</a>
+				<a href="{% url 'logout'%}?next={{request.path}}">Logout</a> -->
+		<ul class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Menù</a>
+	                <div class="dropdown-menu">
+				<a class="dropdown-item" href="{% url 'cal:home' %}">Home</a>
+				<a class="dropdown-item" href="{% url 'logout'%}?next={{request.path}}">Logout</a>
+                        </div>
+	 	</ul>
+        </form>
+	{% else %}
+        <a href="{% url 'login'%}?next={{request.path}}">Login</a>
+        {% endif %} 
+</nav>
 
-{% block content %}
+	<h1 class="cover-heading mt-3">Form di registrazione nuovo </h1>
+	<h1 class="cover-heading mt-3">{{ name }}</h1>
 
-<form method="post">
-  {% csrf_token %}
-  <table class="form form-table">
-    {{ form }}
-    <tr><td colspan="2"><button type="submit" class="btn btn-info right"> Submit </button></td></tr>
-  </table>
-</form>
+	<form method="post" class="mt-4">
+	  {% csrf_token %}
+	  <table class="form-table">
+	    {{ form }}
+	    <tr><td colspan="2"><button type="submit" class="btn btn-info right"> Submit </button></td></tr>
+	  </table>
+	</form>
+	</main>
+	<!-- NUOVO CALENDARIO -->
+	<!--		
+		{% if user.is_staff %}
+		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="new">Aggiungi Calendario</a>
+		{% endif %}
+	-->
+	</div>
 
-{% endblock %}
+	<!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 
+</body>
+</html>
       

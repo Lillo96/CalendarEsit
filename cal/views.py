@@ -35,7 +35,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 
 from mqtt_iot import client
 
-class CalendarGroupList(APIView):
+class CalendarGroupList(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/home.html'
     """
@@ -56,7 +56,7 @@ class CalendarGroupList(APIView):
             return redirect ('')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CalendarGroupCreate(APIView):
+class CalendarGroupCreate(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/form.html'
     """
@@ -71,7 +71,7 @@ class CalendarGroupCreate(APIView):
         return redirect('home')
 
 
-class CalendarGroupDetail(APIView):
+class CalendarGroupDetail(LoginRequiredMixin, APIView):
     """
     Retrieve, update or delete a calendargroup instance.
     """
@@ -99,7 +99,7 @@ class CalendarGroupDetail(APIView):
         calendargroup.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class CalendarsOfGroupList(APIView):
+class CalendarsOfGroupList(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/calendarOfGroup.html'
     """
@@ -113,12 +113,15 @@ class CalendarsOfGroupList(APIView):
 
     def get(self, request, pk, format=None):
         calendar = self.get_object(pk)
-        print (calendar)
+        #print (calendar.name)
+	#print (calendar[0].group)
         serializer = CalendarSerializer(calendar,  many=True)
         #return Response(serializer.data)
-        return Response({'object_list': calendar})
+        name = CalendarGroups.objects.filter(id=pk)
+        print (name[0].name)
+        return Response({'object_list': calendar, 'name': name[0].name})
 
-class EventsOfCalendarList(APIView):
+class EventsOfCalendarList(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/eventsOfCalendar.html'
     """
@@ -126,7 +129,7 @@ class EventsOfCalendarList(APIView):
     """
     def get_object(self, pk, pk1):
         try:
-            return Event.objects.filter(calendar_id=pk1)
+            return Event.objects.filter(calendar_id=pk1).order_by('day')
         except Event.DoesNotExist:
             raise Http404
 
@@ -134,7 +137,8 @@ class EventsOfCalendarList(APIView):
         event = self.get_object(pk, pk1)
         serializer = EventSerializer(event, many=True)
         #return Response(serializer.data)
-        return Response({'object_list': event})
+        name = Calendar.objects.filter(id=pk1)
+        return Response({'object_list': event, 'pk': pk, 'name': name[0].name})
 
 class EventsOfCalendarListNode(APIView):
     """
@@ -245,7 +249,7 @@ class CalendarView(LoginRequiredMixin, generic.ListView):
 
         # Call the formatmonth method, which returns our calendar as a table
         html_cal = cal.formatmonth(d.year, d.month, withyear=True)
-        context['calendar_view'] = mark_safe(html_cal)
+        context['calendar'] = mark_safe(html_cal)
         
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
@@ -254,7 +258,10 @@ class CalendarView(LoginRequiredMixin, generic.ListView):
         context.update({'object_list': object_list})
         event_list = Event.objects.filter(calendar=calendar_id)
         context.update({'event_list': event_list})
-        #print (context['event_list'])
+        name = Calendar.objects.filter(id=calendar_id)
+        context['name'] = name[0].name
+        context['pk'] = self.kwargs['group_id']
+        context['pk1'] = self.kwargs['calendar_id']
         return context
 
 def get_date(req_day):
@@ -298,8 +305,8 @@ def addEvent(request, pk=None ,pk1=None):
         if((temp-now) < 6000):
            publish(pk,pk1,client)
         
-        return HttpResponseRedirect(reverse('cal:home'))
-    return render(request, 'cal/form.html', {'form': form})
+        return HttpResponseRedirect(reverse('cal:list_event', args=[pk, pk1]))
+    return render(request, 'cal/form.html', {'form': form, 'name': "Eventi"})
 
 @login_required
 def group(request):
@@ -309,7 +316,7 @@ def group(request):
     if request.POST and form.is_valid():
         form.save()
         return HttpResponseRedirect(reverse('cal:home'))
-    return render(request, 'cal/form.html', {'form': form})
+    return render(request, 'cal/form.html', {'form': form, 'name': "Edificio"})
 
 @login_required
 def calendarCreate(request, pk=None):
@@ -322,6 +329,6 @@ def calendarCreate(request, pk=None):
     if request.POST and form.is_valid():
         #form['group'] =      
         form.save()
-        return HttpResponseRedirect(reverse('cal:home'))
-    return render(request, 'cal/form.html', {'form': form})
+        return HttpResponseRedirect(reverse('cal:list_calendar', args=[pk]))
+    return render(request, 'cal/form.html', {'form': form, 'name': "stanza"})
 

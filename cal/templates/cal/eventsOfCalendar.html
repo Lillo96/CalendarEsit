@@ -19,15 +19,38 @@
 <body class="text-center mt-5">
 	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 		<main class="inner cove border" role="main" style="background-color: white;">
-			<h1 class="cover-heading mt-3">Lista Eventi di</h1>
-			
+
+			<nav class="navbar navbar-light bg-light">
+			  {% if user.is_authenticated %}
+			  <a class="navbar-brand">Ciao, {{ user.get_username }} </a>
+			  <p class="navbar-brand text-muted"> <script> document.write(new Date().toLocaleString('en-US')); </script> </p>
+			  <form class="form-inline">
+			    <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
+			    <!-- <a href="{% url 'logout'%}?next={{request.path}}">Logout</a> -->
+				<ul class="nav-item dropdown">
+				      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Menù</a>
+				      <div class="dropdown-menu">
+					<a class="dropdown-item" href="{% url 'cal:home' %}">Home</a>
+					<a class="dropdown-item" href="{% url 'cal:list_calendar' pk %}">Aule</a>
+					<a class="dropdown-item" href="{% url 'logout'%}?next={{request.path}}">Logout</a>
+				      </div>
+			 	</ul>
+			  </form>
+			  {% else %}
+			  <a href="{% url 'login'%}?next={{request.path}}">Login</a>
+			  {% endif %} 
+			</nav>
+				
+			<h1 class="cover-heading mt-3">Lista prenotazioni di</h1>
+			<h2 class="text-primary"> {{ name }}</h2>
+			<!--
 			 {% if user.is_authenticated %}
 			     <li>User: {{ user.get_username }}</li>
 			     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
 			   {% else %}
 			     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
 			   {% endif %} 
-
+			-->
 
 			<div class="mt-5">
 				<ul class="list-group">
@@ -40,7 +63,7 @@
 			</div>
 
 		<a href="calendar" class="btn btn-primary btn-lg active mt-5 mb-5" role="button" aria-pressed="true">Vai al calendario</a>
-		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="new">Crea Evento</a>
+		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="new">Prenota</a>
 
 		</main>
 	</div>

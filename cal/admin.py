@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.contrib import admin
 from cal.models import Event, Calendar, CalendarGroups
 
@@ -10,11 +11,10 @@ from django.urls import reverse
 from calendar import HTMLCalendar
 from django.utils.safestring import mark_safe
 
-#from __future__ import unicode_literals
 """
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['title','day', 'start_time', 'end_time', 'notes', 'calendar']
-    change_list_template = 'admin/events/change_list.html'
+    list_display = ['title','day', 'start_time', 'end_time', 'notes']
+    change_list_template = 'cal/templates/calendar.html'
  
     def changelist_view(self, request, extra_context=None):
         after_day = request.GET.get('day__gte', None)
