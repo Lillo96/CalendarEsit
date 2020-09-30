@@ -167,7 +167,6 @@ def on_message(client, userdata, msg):
        print (content)
 
 def on_publish(client,userdata,result):            #create function for callback
-   
     print(result)
     print("data published \n")
     pass
@@ -224,5 +223,5 @@ def publish(arg1,arg2,client):
     time.sleep(1)   
 
 client = init_client()
-
+client1 = init_client()
 

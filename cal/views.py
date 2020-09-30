@@ -31,7 +31,7 @@ from cal.serializers import CalendarGroupsSerializer, CalendarSerializer, EventS
 from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
 
-from mqtt_iot import client
+from mqtt_iot import client1
 
 #Funzione per ottenere la lista di edifci esistenti
 class CalendarGroupList(LoginRequiredMixin, APIView):
@@ -249,7 +249,7 @@ def addEvent(request, pk=None ,pk1=None):
 
         #Se l'evento avviene fra meno di un ora chiamo la publish
         #if((temp-now) < 6000):
-        publish(pk,pk1,client)
+        publish(pk,pk1,client1)
         
         return HttpResponseRedirect(reverse('cal:list_event', args=[pk, pk1]))
     return render(request, 'cal/form.html', {'form': form, 'name': "Eventi"})
