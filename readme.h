@@ -6,9 +6,11 @@
 
 4 - python3 manage.py createsuperuser
 
-5- Settare Path in /Calendar/__init__.py al path totale dove si trova il file cal/mqtt_iot (ex: /home/ubuntu/CalendarEsit/cal/ )
+5 - Settare Path in /Calendar/__init__.py al path totale dove si trova il file cal/mqtt_iot (ex: /home/ubuntu/CalendarEsit/cal/ )
 
 6 - Cambiare indirizzo host a localhost in caso di utilizzo in locale in cal/mqtt_iot  
+
+7 - Per inizializzare il processo in background che si occupa di inviare le prenotazioni in automatico : python3 manage.py process_tasks
 
 
 
