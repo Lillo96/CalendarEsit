@@ -6,24 +6,22 @@ from background_task.models import Task
 
 app_name = 'cal'
 urlpatterns = [
-    url(r'^$', views.hello, name='hello'), #Prova
+    url(r'^$', views.hello, name='hello'), #Pagina iniziale
    
-    ########
-
-    path('homeProva1/', views.CalendarGroupList.as_view(), name='home'), #LISTA EDIFICI OK
-    path('homeProva1/<int:pk>/calendars/', views.CalendarsOfGroupList.as_view(), name='list_calendar'), #LISTA CALENDARI DI QUEL PK EDIFICIO OK
-    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarList.as_view(), name='list_event'), #LISTA EVENTI DI QUEL PK CALENDARIO OK
+    path('homeProva1/', views.CalendarGroupList.as_view(), name='home'), #Lista edifici
+    path('homeProva1/<int:pk>/calendars/', views.CalendarsOfGroupList.as_view(), name='list_calendar'), #Lista calendari con pk specifico 
+    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarList.as_view(), name='list_event'), #Lista prenotazioni di uno specifico calendario
     
-    url('homeProva1/(?P<group_id>\d+)/calendars/(?P<calendar_id>\d+)/events/calendar/$', views.CalendarView.as_view(), name='calendar_view'), #CALENDARIO OK
+    url('homeProva1/(?P<group_id>\d+)/calendars/(?P<calendar_id>\d+)/events/calendar/$', views.CalendarView.as_view(), name='calendar_view'), #Visualizzazione calendario grafico
 
-    path('homeProva1/group/new/', views.group, name='group_newprova1'), #NUOVO GRUPPO OK
-    path('homeProva1/<int:pk>/calendars/new/', views.calendarCreate, name='calendar_newprova1'), #NUOVO CALENDARIO OK
-    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/new/', views.addEvent, name='event_newprova1'), #NUOVO EVENTO OK
+    path('homeProva1/group/new/', views.group, name='group_newprova1'), #Aggiunta nuovo edificio
+    path('homeProva1/<int:pk>/calendars/new/', views.calendarCreate, name='calendar_newprova1'), #Aggiunta nuovo calendario
+    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/new/', views.addEvent, name='event_newprova1'), #Aggiunta nuova prenotazione
 
-    path('mqtt/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarListNode.as_view()),
+    path('mqtt/<int:pk>/calendars/<int:pk1>/events/', views.EventsOfCalendarListNode.as_view()), #Lista prenotazioni di uno specifico calendario in formato JSON
+
+    path('homeProva1/<int:pk>/calendars/<int:pk1>/events/<int:pk2>/', views.EventDetail.as_view(), name='eventdetail'), #Dettaglio evento
     
-
-    ########
 ]
 
 Task.objects.all().delete()

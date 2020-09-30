@@ -20,7 +20,7 @@
 			<nav class="navbar navbar-light bg-light">
 			  {% if user.is_authenticated %}
 			  <a class="navbar-brand">Ciao, {{ user.get_username }} </a>
-			  <p class="navbar-brand text-muted"> <script> document.write(new Date().toLocaleString('en-US')); </script> </p>
+			  <p class="navbar-brand text-muted"> <script> document.write(new Date().toLocaleString('en-us', { timeZone: 'UTC' })); </script> </p>
 			  <form class="form-inline">
 			    <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
 			    <a href="{% url 'logout'%}?next={{request.path}}">Logout</a>
@@ -30,16 +30,6 @@
 			  {% endif %} 
 			</nav>
 			
-			<!--
-			 <ul>
-			   {% if user.is_authenticated %}
-			     <li>User: {{ user.get_username }}</li>
-			     <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>   
-			   {% else %}
-			     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
-			   {% endif %} 
-			 </ul>
-			-->
 
 			<h1 class="cover-heading mt-3">Lista Edifici</h1>
 			
@@ -59,34 +49,6 @@
 	</div>
  
 
- <!---
-  <div>
-
-  <p>Benvenuto</p>
-  <form>
-	  <div class="form-group">
-	    <label for="exampleInputEmail1">Email address</label>
-	    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-	    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-	  </div>
-	  <div class="form-group">
-	    <label for="exampleInputPassword1">Password</label>
-	    <input type="password" class="form-control" id="exampleInputPassword1">
-	  </div>
-	  <div class="form-group form-check">
-	    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-	    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-	  </div>
-	  <!-- <button type="submit" class="btn btn-primary">Login</button> -->
-          <!-- <a class="btn btn-primary" href="home.html" role="button">Login</a> -->
-  <!--
-  </form>
-
-  <a class="btn btn-primary" href="home" role="button">Login</a>
-
-  </div>
-  
-  -->
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -95,26 +57,6 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
-  <!--
-  <script type="text/javascript" src="/my_admin/jsi18n/"></script>
-  <script type="text/javascript" src="/media/admin/js/core.js"></script>
-  -->
-</body>
+  </body>
 
-<!--
-
-<body>
-<p>LISTA GRUPPI </p>
-<div>
-	<ul>
-		{% for group in object_list %}
-   	 	<a href=""><li>{{ group.name }} - {{ group.id }}</li></a>
-		{% empty %}
-    		<li>No articles yet.</li>
-		{% endfor %}
-	</ul>
-</div>
-
-</body>
--->
 </html>

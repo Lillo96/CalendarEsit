@@ -5,8 +5,7 @@ from django.core.exceptions import ValidationError
 from datetime import datetime
 from datetime import date
 
-#from __future__ import unicode_literals
-
+#Classe CalendarGroups
 class CalendarGroups(models.Model):
    
     name = models.CharField(max_length = 155, blank=True, null=True, unique=True)
@@ -20,10 +19,9 @@ class CalendarGroups(models.Model):
         url = reverse('', args=(self.id,))
         return f'<a href="{url}"> {self.name} </a>'
    
-
+#Classe Calendar con chiave esterna a "CalendarGroups"
 class Calendar(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    #created_by
     group = models.ForeignKey(CalendarGroups, on_delete = models.CASCADE, default='')
  
     @property
@@ -31,7 +29,7 @@ class Calendar(models.Model):
         url = reverse('cal:calendar_view', args=(self.id, self.group))
         return f'<a href="{url}"> {self.name} </a>'
    
-
+#Classe Event con chiave esterna a "Calendar"
 class Event(models.Model):
     title = models.CharField(u'Title of the event', help_text=u'es: "Titolo evento"', max_length=200, default='') 
     day = models.DateField(u'Day of the event', help_text=u'es: "2020-09-31"')
@@ -59,17 +57,16 @@ class Event(models.Model):
     def get_absolute_url(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name), args=[self.id])
         return u'<a href="%s">%s: %s:%s</a>' % (url, str(self.title), str(self.start_time), str(self.end_time),)
- 
+   
+    """
+    Funzione che controlla se le date da input siano corrette:
+    gli eventi non si sovrappongono, non puoi inserire un orario/data del passato.
+    Nel caso in cui ci siano degli errori, vengono mostrati dei messaggi di errore
+    """
     def clean(self):
         
         if date.today() > self.day:
             raise ValidationError('Errore, non puoi inserire un giorno del passato')
-
-        """
-        nowtime = datetime.now().time()
-        if nowtime >= self.start_time:
-            raise ValidationError('Errore, non puoi inserire un orario del passato')
-        """
 
         if self.end_time <= self.start_time:
             raise ValidationError('Ending times must after starting times')

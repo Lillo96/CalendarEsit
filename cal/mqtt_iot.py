@@ -205,10 +205,6 @@ def init_client():
     client.connect(host, 443,60)
     
     return client
-    #print("After the connection");
-    #client.publish("ciao","stato:pubblico")
-    #client.subscribe("group",0)
-    #client.loop_start()
 
 def publish(arg1,arg2,client):
     print(arg1)
@@ -216,7 +212,7 @@ def publish(arg1,arg2,client):
     topic1 = "$aws/things/%d-%d/shadow/update" % (arg1,arg2)
     
     params= {'pk':arg1,'pk1':arg2}
-    url = 'http:/127.0.0.1:8000/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
+    url = 'http://127.0.0.1:8000/mqtt/%d/calendars/%d/events/' % (arg1,arg2)
     resp = requests.get(url=url)
     json1 = resp.json()
    
@@ -224,8 +220,6 @@ def publish(arg1,arg2,client):
     print("evento in json: " + j)
   
     print("try to publish")
-    #client = init_client()
-    #print("Post init_client()")
     client.publish(topic1, j)
     time.sleep(1)   
 

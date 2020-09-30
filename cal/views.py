@@ -20,8 +20,6 @@ from .publisher import publish
 
 from django.views.decorators.csrf import csrf_exempt
 
-################
-
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -35,6 +33,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 
 from mqtt_iot import client
 
+#Funzione per ottenere la lista di edifci esistenti
 class CalendarGroupList(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/home.html'
@@ -45,6 +44,7 @@ class CalendarGroupList(LoginRequiredMixin, APIView):
         calendargroups = CalendarGroups.objects.all()
         serializer = CalendarGroupsSerializer(calendargroups, many=True)
         #return Response(serializer.data)
+        #Restituisce tutti gli edifici  
         return Response({'object_list': calendargroups})
 
     def post(self, request, format=None):
@@ -56,49 +56,7 @@ class CalendarGroupList(LoginRequiredMixin, APIView):
             return redirect ('')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CalendarGroupCreate(LoginRequiredMixin, APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'cal/form.html'
-    """
-    Create a new calendargroup.
-    """
-    def post(self, request):
-        calendargroup = get_object_or_404(CalendarGroups)
-        serializer = CalendarGroupsSerializer(calendargroup, data=request.data)
-        if not serializer.is_valid():
-            return Response({'serializer': serializer, 'calendargroup': calendargroup})
-        serializer.save()
-        return redirect('home')
-
-
-class CalendarGroupDetail(LoginRequiredMixin, APIView):
-    """
-    Retrieve, update or delete a calendargroup instance.
-    """
-    def get_object(self, pk):
-        try:
-            return CalendarGroups.objects.get(pk=pk)
-        except CalendarGroups.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        calendargroup = self.get_object(pk)
-        serializer = CalendarGroupsSerializer(snippet)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        calendargroup = self.get_object(pk)
-        serializer = CalendarGroupsSerializer(calendargroup, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        calendargroup = self.get_object(pk)
-        calendargroup.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+#Funzione per ottenere la lista di calendari esistenti 
 class CalendarsOfGroupList(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/calendarOfGroup.html'
@@ -112,15 +70,15 @@ class CalendarsOfGroupList(LoginRequiredMixin, APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
+        #Restituisce tutti i calendari di uno specifico gruppo
         calendar = self.get_object(pk)
-        #print (calendar.name)
-	#print (calendar[0].group)
+        #Serializzazione dei calendari
         serializer = CalendarSerializer(calendar,  many=True)
-        #return Response(serializer.data)
+        #Restituisce il nome dell'aula in cui sono presenti i calendari
         name = CalendarGroups.objects.filter(id=pk)
-        print (name[0].name)
         return Response({'object_list': calendar, 'name': name[0].name})
 
+#Funzione per ottenre la lista delle prenotazioni esistenti
 class EventsOfCalendarList(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'cal/eventsOfCalendar.html'
@@ -134,33 +92,39 @@ class EventsOfCalendarList(LoginRequiredMixin, APIView):
             raise Http404
 
     def get(self, request, pk, pk1, format=None):
+        #Restituisce tutti le prenotazioni di una specifica aula
         event = self.get_object(pk, pk1)
         serializer = EventSerializer(event, many=True)
-        #return Response(serializer.data)
+        #Restituisce il nome dell'aula in cui sono presenti gli eventi
         name = Calendar.objects.filter(id=pk1)
         return Response({'object_list': event, 'pk': pk, 'name': name[0].name})
 
+""" 
+Funzione per ottenere la lista delle prenotazioni esistenti in formato JSON.
+Questa funzione viene utilizzata per inviare alla node un JSON contenente i dati dell'evento.
+Ci sono 3 casi:
+   - Se c'è un evento in corso, restituisce quello
+   - Se non c'è un evento in corso ma c'è un evento in futuro (IN DATA ODIERNA) invia quello
+   - Se in DATA ODIERNA, non vi sono prenotazioni, invia un array vuoto [].
+"""
 class EventsOfCalendarListNode(APIView):
     """
     List all eventsofcalendars to NodeMCU
     """
     def get_object(self, pk, pk1):
         try:
-            #filtro eventi per ottenere solo quelli di oggi
             events= Event.objects.filter(calendar=pk1,day=date.today()).order_by('start_time')
-            #print(events)
-            #filtro per ottenere o evento in corso o prossimo evento
             if events.exists():
                nowtime=datetime.now().time()
                for e in events:
-                  print("PROVA", e)
-                  #evento in corso
+                  print("Evento:", e)
+                  #Evento in corso
                   if (e.start_time <= nowtime and e.end_time >= nowtime):
                      return e
-                  #evento prossimo
+                  #Evento prossimo
                   elif (e.start_time > nowtime):
                      return e
-            #return events
+            #Return events
             else:
                return []
         except Event.DoesNotExist:
@@ -176,63 +140,40 @@ class EventsOfCalendarListNode(APIView):
             serializer = EventSerializer(event, many=True)
 
         return Response(serializer.data)
-        
-       
 
-################
+#Funzione per la visualizzazione dei dettagli di uno specifico evento
+class EventDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'cal/eventdetail.html'
+    """
+    Details event 
+    """
+    def get_object(self, pk, pk1, pk2):
+        try:
+            return Event.objects.filter(calendar_id=pk1, id=pk2)
+        except Event.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, pk1, pk2, format=None):
+        #Restituisce tutti le prenotazioni di una specifica aula
+        event = self.get_object(pk, pk1, pk2)
+        serializer = EventSerializer(event, many=True)
+        print(event)
+        return Response({'title': event[0].title, 'day': event[0].day, 'start_time': event[0].start_time, 'end_time': event[0].end_time, 'notes': event[0].notes, 'calendar': event[0].calendar.name})
+
+
+        
 def hello(request):
     return render(request, 'cal/hello.html')
-    #return HttpResponse('hello')
 
+#Funzione per la pagina di home
 def home(request):
     return render(request, 'cal/home.html')
 
 def index(request):
     return HttpResponse('hello')
 
-class GroupCalendarView(LoginRequiredMixin, generic.ListView):
-    #login_url = 'accounts/login/'
-    #redirect_field_name = 'redirect_to'
-
-    model = CalendarGroups
-    template_name = 'cal/home.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        serializer = CalendarGroupsSerializer(context, many=True) ###
-       
-        return context
-
-class CalendarsOfGroupView(LoginRequiredMixin, generic.ListView):
-    model = Calendar
-    template_name = 'cal/calendarOfGroup.html'
-    #i = kwargs['group_id']
-   
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        group_id = self.kwargs['group_id']       
-        object_list = Calendar.objects.filter(group=group_id)
-        context.update({'object_list': object_list})
-        
-        #print (context['object_list'][0].group.name)
-
-        return context
-
-class EventsOfCalendarView(LoginRequiredMixin, generic.ListView):
-    model = Event
-    template_name = 'cal/eventsOfCalendar.html'
-    #i = kwargs['group_id']
-   
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        calendar_id = self.kwargs['calendar_id']       
-        object_list = Event.objects.filter(calendar=calendar_id)
-        context.update({'object_list': object_list})
-        
-        #print (context)
-
-        return context    
-     
+#Funzione per la visualizzazione delle prenotazioni nel calendario     
 class CalendarView(LoginRequiredMixin, generic.ListView):
     model = Event
     template_name = 'cal/calendar.html'
@@ -264,18 +205,21 @@ class CalendarView(LoginRequiredMixin, generic.ListView):
         context['pk1'] = self.kwargs['calendar_id']
         return context
 
+#Funzione per la restituzione della data odierna
 def get_date(req_day):
     if req_day:
         year, month = (int(x) for x in req_day.split('-'))
         return date(year, month, day=1)
     return datetime.today()
 
+#Funzione per la restituzione del numero del mese precedente
 def prev_month(d):
     first = d.replace(day=1)
     prev_month = first - timedelta(days=1)
     month = 'month=' + str(prev_month.year) + '-' + str(prev_month.month)
     return month
 
+#Funzione per la restituzione del numerod el mese successivo
 def next_month(d):
     days_in_month = calendar.monthrange(d.year, d.month)[1]
     last = d.replace(day=days_in_month)
@@ -283,6 +227,7 @@ def next_month(d):
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
 
+#Funzione per l'aggiunta di una nuova prenotazione
 @csrf_exempt
 def addEvent(request, pk=None ,pk1=None):
     print("sono dentro add event")
@@ -291,23 +236,25 @@ def addEvent(request, pk=None ,pk1=None):
     
     form = EventForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():
-        print(form)
         form.save()
-        print("form valido")
-        #controllo se evento appena aggiunto si svolgerà prima di un dato tempo ed in caso richiamo il publisher
+        print("Form valido")
+
+        #Controllo se evento appena aggiunto si svolgerà prima di un dato tempo ed in caso richiamo il publisher
         e = Event.objects.filter(calendar=pk1).latest('id')
         now= datetime.now().time()
-        #trasformo orari in int per poter sottrarre
+        
+        #Trasformo orari in int per poter sottrarre
         now= int(now.strftime('%H%M%S'))
         temp= int(e.start_time.strftime('%H%M%S'))
-        #se l'evento avviene fra meno di un ora chiamo la publish
-        
-        if((temp-now) < 6000):
-           publish(pk,pk1,client)
+
+        #Se l'evento avviene fra meno di un ora chiamo la publish
+        #if((temp-now) < 6000):
+        publish(pk,pk1,client)
         
         return HttpResponseRedirect(reverse('cal:list_event', args=[pk, pk1]))
     return render(request, 'cal/form.html', {'form': form, 'name': "Eventi"})
 
+#Funzione per l'aggiunta di un nuovo edificio
 @login_required
 def group(request):
     instance = CalendarGroups()
@@ -318,17 +265,14 @@ def group(request):
         return HttpResponseRedirect(reverse('cal:home'))
     return render(request, 'cal/form.html', {'form': form, 'name': "Edificio"})
 
+#Funzione per l'aggiunta di un nuovo calendario
 @login_required
 def calendarCreate(request, pk=None):
     instance = Calendar()
   
-    #instance = Calendar()
     instance = Calendar(group_id=pk)
     form = CalendarForm(request.POST or None, instance=instance)
-    #print (form['group'])
     if request.POST and form.is_valid():
-        #form['group'] =      
         form.save()
         return HttpResponseRedirect(reverse('cal:list_calendar', args=[pk]))
     return render(request, 'cal/form.html', {'form': form, 'name': "stanza"})
-

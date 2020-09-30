@@ -23,11 +23,8 @@
 			<nav class="navbar navbar-light bg-light">
 	{% if user.is_authenticated %}
 	<a class="navbar-brand">Ciao, {{ user.get_username }} </a>
-	<p class="navbar-brand text-muted"> <script> document.write(new Date().toLocaleString('en-US')); </script> </p>
+	<p class="navbar-brand text-muted"> <script> document.write(new Date().toLocaleString('en-us', { timeZone: 'UTC' })); </script> </p>
 	<form class="form-inline">
-			    <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
-			    	<!--<a href="{% 'cal:home' }">Home</a>
-				<a href="{% url 'logout'%}?next={{request.path}}">Logout</a> -->
 		<ul class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Menù</a>
 	                <div class="dropdown-menu">
@@ -52,12 +49,6 @@
 	  </table>
 	</form>
 	</main>
-	<!-- NUOVO CALENDARIO -->
-	<!--		
-		{% if user.is_staff %}
-		<a class="btn btn-primary btn-lg active mt-5 mb-5" href="new">Aggiungi Calendario</a>
-		{% endif %}
-	-->
 	</div>
 
 	<!-- Optional JavaScript -->

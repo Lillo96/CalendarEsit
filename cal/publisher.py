@@ -6,7 +6,6 @@ import requests
 
 import json
 
-
 from .mqtt_iot import publish   
 from background_task import background
 

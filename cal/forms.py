@@ -6,18 +6,18 @@ from django.contrib.admin import widgets
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
-
+"""
+Classe per il form dell'aggiunta di un evento.
+Nei fields non è incluso il calendario poichè viene settato di dafault nella views.
+"""
 class EventForm(ModelForm):
     class Meta:
         model = Event
         fields = ('title', 'day', 'start_time', 'end_time','notes',)
-    """
-        widgets = {
-            'start_time': widgets.AdminTimeWidget(),
-            'end_time': widgets.AdminTimeWidget()
-        }
-    """
 
+"""
+Classe per il form dell'aggiunta di un edificio.
+"""
 class CalendarGroupsForm(ModelForm):
   class Meta:
     model = CalendarGroups
@@ -27,12 +27,14 @@ class CalendarGroupsForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(CalendarGroupsForm, self).__init__(*args, **kwargs)
 
-
+"""
+Classe per il form dell'aggiunta di un calendario.
+Nei fields non è incluso il group poichè viene settato di dafault nella views.
+"""
 class CalendarForm(ModelForm):
   class Meta:
     model = Calendar
 
-    #fields = ('name', 'group')
     fields = ('name',)
 
     def __init__(self, *args, **kwargs):
