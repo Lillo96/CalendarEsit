@@ -4,6 +4,13 @@ const char pass[] = "az7ngcdwthkru";
 
 #define THINGNAME "mqtt-MeetingRooms"
 
+/*
+ * Define utili per settare il topic della ricezione degli eventi
+ */
+
+#define CALENDAR_ID_1 "5"
+#define GROUP_ID_1 "7"
+
 int8_t TIME_ZONE = +1; //ITALY +1
 #define USE SUMMER_TIME_DST
 

@@ -27,13 +27,21 @@ RTC_DS1307 RTC;
 // Define MQTT port
 const int MQTT_PORT = 8883;
 
-// Define subscription and publication topics (on thing shadow)
-const char MQTT_SUB_TOPIC[] = "$aws/things/3-3/shadow/update";
-const char MQTT_PUB_TOPIC[] = "event/new";
-const char MQTT_PUB1_TOPIC[] = "event/update";
+/*
+ * Varibili globali utili per il messaggi dell'update board e nuova prenotazione
+ */
 
-#define CALENDAR_ID 3;
-#define GROUP_ID 3;
+#define CALENDAR_ID 5;
+#define GROUP_ID 7;
+
+// Define subscription and publication topics (on thing shadow)
+
+//Topic per la ricezione di un evento o array vuoto []
+const char MQTT_SUB_TOPIC[] = "$aws/things/" GROUP_ID_1 "-" CALENDAR_ID_1 "/shadow/update";
+//Topic per l'invio di una prenotazione
+const char MQTT_PUB_TOPIC[] = "event/new";
+//Topic per l'invio di un messaggio per l'aggiornamento della board
+const char MQTT_PUB1_TOPIC[] = "event/update";
 
 // Enable or disable summer­time
 #ifdef USE_SUMMER_TIME_DST
@@ -41,6 +49,7 @@ uint8_t DST = 1;
 #else
 uint8_t DST = 0;
 #endif
+
 // Create Transport Layer Security (TLS) connection
 WiFiClientSecure net;
 // Load certificates
@@ -50,7 +59,9 @@ BearSSL::PrivateKey key(privkey);
 // Initialize MQTT client
 MQTTClient client;  
 unsigned long lastMs = 0;
-unsigned long pmillis = 0;
+unsigned long pmillis;
+unsigned long currentmillis;
+
 long delta = 0;
 time_t now;
 time_t nowish = 1510592825;
@@ -68,17 +79,6 @@ int buttonState = 0;
 // if you don't know your display address, run an I2C scanner sketch
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);  
 
-/* 
-  0: status board
-    0 => free
-    1 => not free
-  1: id event
-  2: title event
-  3: start_time
-  4: end_time
-*/
-//char board[5] = ["free", null, null, null, null];
-
 bool status_board = false;
 int id_event_board = 0;
 String title_event_board = "";
@@ -89,7 +89,7 @@ struct tm timeinfo;
 bool nextEvent;
 int st_h, st_m, st_s, et_h, et_m, et_s;
 
-// setto i led e lcd nel caso in cui l'aula sia libera
+//Setto i led e LCD nel caso in cui l'aula sia libera
 void setLCDandLed_stanzaLibera(){
     // clears the display to print new message
     lcd.clear();
@@ -110,7 +110,7 @@ void setLCDandLed_stanzaLibera(){
     //myDelay(1000);
 }
 
-// setto i led e lcd nel caso in cui l'aula sia occupata
+//Setto i led e lcd nel caso in cui l'aula sia occupata
 void setLCDandLed_stanzaOccupata(){
     digitalWrite(ledpin1, HIGH); 
     digitalWrite(ledpin2, LOW);
@@ -135,11 +135,35 @@ void setLCDandLed_stanzaOccupata(){
     // clears the display to print new message
 }
 
+//Stampo le info del prossimo evento
+void setLCDandLed_InfoNextEvent(){
+    Serial.println("DENTRO next event");
+  
+    // clears the display to print new message
+    lcd.clear();
+    digitalWrite(ledpin1, LOW);
+    digitalWrite(ledpin2, HIGH);
+
+    // set cursor to first column, first row
+    lcd.setCursor(0, 0);
+    // print message
+    lcd.print(String("N.E.:") + title_event_board);
+
+    // set cursor to second colum, second row
+    lcd.setCursor(0, 1);
+    // print message
+    lcd.print(st_h + String(":") + st_m + ":" + st_s + "-" + et_h + ":" + et_m + ":" + et_s);
+
+    delay(1000); //IMPORTANTE
+    //myDelay(1000);
+}
+
 // Get time through Simple Network Time Protocol 
 void NTPConnect(void)
-{
+{  
   Serial.print("Setting time using SNTP");
   configTime(TIME_ZONE * 3600, DST * 3600, "pool.ntp.org", "time.nist.gov");
+  //configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   now = time(nullptr);
   while (now < nowish)
   {
@@ -149,17 +173,18 @@ void NTPConnect(void)
     now = time(nullptr);
   }
   Serial.println("done!");
-  //struct tm timeinfo;
   gmtime_r(&now, &timeinfo);
   Serial.print("Current time: ");
   String tmp = asctime(&timeinfo);
   Serial.println(tmp);
   int ora = timeinfo.tm_hour;
+  Serial.println("Orario attuale:");
   Serial.println (ora);
 
   RTC.adjust(DateTime(now));  
 }
 
+//Funzione per estrarre le ore, minuti e secondi in variabili intere
 bool getTime(const char *str, String value)
 {
   int Hour, Min, Sec;
@@ -182,8 +207,11 @@ bool getTime(const char *str, String value)
  
 }
 
+//Funzione per calcolare il delta tra due time differenti
 long checkDeltaTimeEvent (int h1, int m1, int s1, int h2, int m2, int s2) {
   int hourF, minuteF, secondF, result;
+
+  Serial.println("DENTRO CHECKDELTATIME");
 
   hourF = h1 - h2;
   minuteF = m1 - m2;
@@ -192,7 +220,7 @@ long checkDeltaTimeEvent (int h1, int m1, int s1, int h2, int m2, int s2) {
   return ((hourF*3600)+(minuteF*60)+secondF)*1000;
   }
 
-// MQTT management of incoming messages
+//Funzione per settare il valore del delta
 void checkRoom_NewEvent() {
   
   if(status_board == false) {
@@ -201,12 +229,15 @@ void checkRoom_NewEvent() {
     delta = checkDeltaTimeEvent(st_h, st_m, st_s, timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
     Serial.println("Valore delta");
     Serial.print(delta);
+    
   }
   
 }
 
+//Gestione della ricezione di un nuovo messaggio
 void messageReceived(MQTTClient *client, char topic[], char payload[], int payload_length)
 {
+  //Deserializzazione del messaggio JSON in arrivo
   StaticJsonDocument<200> doc;
   deserializeJson(doc, payload);
   const int id1 = doc["id"];
@@ -214,13 +245,20 @@ void messageReceived(MQTTClient *client, char topic[], char payload[], int paylo
   const char* start_time = doc["start_time"];
   const char* end_time = doc["end_time"];
 
-  //Serial.println(id1);
-
   int id =  id1;
   String title = String (title1);
  
   Serial.println("Lunghezza:");
   Serial.println(payload_length);
+
+  /*
+   * I messagi che possono essere ricevuti, sono di due tipologie:
+   *  - Messaggio contenente le info di un evento (nel caso in cui ci 
+   *    sia un evento in corso o prossimo, in data odierna)
+   *  - Messaggio contenente un array vuoto [] nel caso in cui non vi sia 
+   *    nessuna prenotazione in corso o prossima (in data odierna)   
+   */
+
 
   // non è un []
   if (payload_length != 2){
@@ -231,16 +269,19 @@ void messageReceived(MQTTClient *client, char topic[], char payload[], int paylo
     Serial.println("Status board");
     Serial.print(status_board);
 
-    // caso in cui l'aula sia libera
+    //Caso in cui l'aula sia libera
     if (id_event_board != id && status_board == false) {
         Serial.println("AULA LIBERA");
         NTPConnect();
         getTime(start_time, "start_time");
         getTime(end_time, "end_time");
         title_event_board = title;
+        pmillis = currentmillis;
         checkRoom_NewEvent();
         nextEvent = true;
         id_event_board = id;
+        //stampa info prossimo evento
+        setLCDandLed_InfoNextEvent();
       } else if(status_board == true) {
            //Se arriva un evento mentre l'aula è prenotata, risetto solo queste varibili
            getTime(start_time, "start_time");
@@ -249,20 +290,27 @@ void messageReceived(MQTTClient *client, char topic[], char payload[], int paylo
     
   }
 
-  //Serial.println(start_time.substring(1,2));
-  //Data start_time = createData(start_time1);
-  //Data end_time = createData(end_time1);
-  //checkRoom(id, title, start_time, end_time);
 }
 
+//Funzione per occupare/liberare l'aula 
 void busyRoom(bool value) {
 
+  Serial.println("DENTRO BUSY ROOM");
+
+  /*
+   * value == true, l'aula è occupata
+   * value == false, l'aula è libera
+   */
+
+  
   if(value == true) {
     //delta calcolato tra start_time e end_time dell'evento in corso
     delta = checkDeltaTimeEvent(et_h, et_m, et_s, st_h, st_m, st_s);
-     
+
+    //Setto i Led e Pin nel caso per l'aula occupata
     setLCDandLed_stanzaOccupata();
   } else {
+     //Azzero il delta e setto i Led ed LCD per l'aula senza prenotazione in corso 
      delta = 0;
      setLCDandLed_stanzaLibera();
     }
@@ -326,11 +374,6 @@ void sendData(int value)
 {
   DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
   JsonObject root = jsonBuffer.to<JsonObject>();
-  //JsonObject key = root.createNestedObject("key");
-  //JsonObject state_reported = state.createNestedObject("reported");
-  
-  //int value1 = analogRead(LIGHTSENSOR1);
-
   root["group_id"] = GROUP_ID;
   root["calendar_id"] = CALENDAR_ID;
 
@@ -339,8 +382,6 @@ void sendData(int value)
   char shadow[measureJson(root) + 1];
   serializeJson(root, shadow, sizeof(shadow));
     
-  //Serial.printf("Sending  [%s]: ", topic);
-
   //Con value a 0 è per aggiungere un nuovo evento 
   if (value == 0) {
     if (!client.publish(MQTT_PUB_TOPIC, shadow, false, 0))
@@ -354,6 +395,7 @@ void sendData(int value)
 
 void setup()
 {
+  //Settare il led, bottone e LCD
   pinMode(ledpin1, OUTPUT);
   pinMode(ledpin2, OUTPUT);
   pinMode(button, INPUT);
@@ -363,6 +405,7 @@ void setup()
   // turn on LCD backlight                      
   lcd.backlight();
 
+  //Inizializzazione board con stanza libera
   setLCDandLed_stanzaLibera();
   
   Serial.begin(115200);
@@ -371,6 +414,7 @@ void setup()
   Serial.println();
   Serial.println();
 
+  //Configurazione WiFi e NTPConnect
   WiFi.hostname(THINGNAME);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
@@ -382,10 +426,20 @@ void setup()
   net.setClientRSACert(&client_crt, &key);
   client.begin(MQTT_HOST, MQTT_PORT, net);
 
+  //Connessione Mqtt
   connectToMqtt();
-  sendData(1); //inizializzo la node appena accesa quindi richiedo se vi o meno un evento
-  client.onMessageAdvanced(messageReceived);
   
+  /*
+   * Inizializzo la node appena accesa quindi richiedo 
+   * se vi o meno un evento
+   */
+  sendData(1);
+  
+  //Gestione ricezione di un possibile evento 
+  client.onMessageAdvanced(messageReceived);
+  pmillis = millis();
+  Serial.println("VALORE DELTA DOPO MESSAGGIO:");
+  Serial.println(delta);
 }
 
 void loop()
@@ -402,21 +456,38 @@ void loop()
   else
   {
     client.loop();
-    //if (millis() - lastMs > 5000)
-    //{ //Controllo status board
-      //lastMs = millis();
 
+      //Se il bottone viene premuto il suo valore è 1
       if (buttonState==1){
+          //Gestione casistica nel caso il cui il bottone venga premuto
           Serial.println("Botton ON");
           Serial.println("VALORE DELTA QUANDO BUTTON È 1");
           Serial.println(delta);
-          if (status_board == false && (delta >= 3600000 || delta == 0)) {
+
+          /*
+           * Viene inviato un messaggio nel topic solo se: 
+           * 
+           *  - la board ha status = False (ossia è libera)
+           *  - se il delta è maggiore di un'ora (ossia che il prossimo evento
+           *    non deve inizare tra meno di un'ora, rendendo possibile
+           *    quindi la prenotazione tramite bottone board)
+           *  - OPPURE se il delta ha valore 0 (ossia che non vi nessun evento)
+           */
+          if (status_board == false && (delta > 3600000 || delta == 0)) {
               Serial.println("Dentro add event con button");
-              sendData(0); //aggiungo un nuovo evento se è possibile
+              /*
+               * Richiamo la funzione per l'invio di un messaggio nel topic
+               * per la prenotazione di un'ora tramite bottone della board
+               */
+              sendData(0);
             } else {
-              Serial.println("Dentro ERRORE add event con button");
+              /*
+               * Stampa messaggio di errore nel LCD nel caso
+               * in cui non sia possibile prenotare l'aula
+               */ 
+                Serial.println("Dentro ERRORE add event con button");
                 lcd.clear();
-               // set cursor to first column, first row
+                // set cursor to first column, first row
                 lcd.setCursor(0, 0);
                 // print message
                 lcd.print("Errore! Aula");
@@ -431,41 +502,56 @@ void loop()
                 if (status_board == true){
                     setLCDandLed_stanzaOccupata();
                   } else {
-                      setLCDandLed_stanzaLibera();
+                      if (nextEvent == false) {
+                        setLCDandLed_stanzaLibera();
+                      } else {
+                           setLCDandLed_InfoNextEvent();
+                         }
+                      }
                   }
               }
           
           delay(200);
           //myDelay(200);
       
-
-      //checkRoom();
-      
-      //sendData();
     }
-  }
+  
 
-   unsigned long currentmillis = millis();
-  // questo if serve per prenotare l'aula quando è trascorso delta tempo
-  //Serial.println("VALORE DELTA PRIMA DI PRENOTARE:");
-  //Serial.println(delta);
+  /*
+   * Gestione dell'attesa (sulla base del valore del delta)
+   * dell'inizio corretto della prenotazione.
+   * La prenotazione inizia dopo che è trascorso un delta tempo
+   */
+  currentmillis = millis();
+  //Serial.println("VALORE CURRENTMILLIS");
+  //Serial.println(currentmillis);
+
+  //Serial.println("VALORE PREVIUS");
+  //Serial.println(pmillis);
+  
   if ((((currentmillis - pmillis >= delta) && status_board == false) && nextEvent == true) || delta < 0 ){
     Serial.println("Currentmillis in prenotazione aula");
     Serial.println(currentmillis);
-    pmillis = currentmillis; 
+    pmillis = currentmillis;
+    //Cambia status board, LCD e Pin 
     busyRoom(true);
     Serial.println("Evento programmato: stanza occupata");
     }
 
-  // questo if serve per liberare l'aula quando è trascorso delta tempo
+  //Questo if serve per liberare l'aula quando è trascorso delta tempo
   if ((currentmillis - pmillis >= delta) && status_board == true) {
      Serial.println("Currentmillis in libera aula");
     Serial.println(currentmillis);
     
     pmillis = currentmillis; 
+    //Cambia status board, LCD e Pin
     busyRoom(false);
     nextEvent = false;
     Serial.println("stanza liberata");
-    sendData(1); //l'evento è terminato e aggiorno la board per sapere se vi è un nuovo evento
+    /*
+     * Quando la prenotazione finisce, viene inviato un messaggio del topic
+     * apposito per richiedere l'aggiornamento (se vi sono eventi prossimi o meno)
+     */
+    sendData(1); 
     }
 }
